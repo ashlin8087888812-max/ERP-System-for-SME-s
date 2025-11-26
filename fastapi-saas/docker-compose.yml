@@ -1,0 +1,82 @@
+services:
+  fastapi:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_db
+      - REDIS_URL=redis://redis-pubsub:6379/0
+      - REDIS_PUBSUB_URL=redis://redis-pubsub:6379/0
+      - REDIS_CELERY_BROKER_URL=redis://redis-celery:6379/0
+      - REDIS_CELERY_RESULT_URL=redis://redis-celery:6379/1
+      - CELERY_BROKER_URL=redis://redis-celery:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis-celery:6379/1
+      - ENABLE_METRICS=false
+      - SENTRY_DSN=
+    depends_on:
+      - postgres
+      - redis-pubsub
+      - redis-celery
+
+  postgres:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=saas_db
+    ports:
+      - "5432:5432"
+
+  # Redis for WebSocket Pub/Sub
+  redis-pubsub:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-pubsub-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+
+  # Redis for Celery broker and results
+  redis-celery:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-celery-data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+
+  celery_worker:
+    build: .
+    command: celery -A app.workers.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_db
+      - REDIS_URL=redis://redis-pubsub:6379/0
+      - REDIS_CELERY_BROKER_URL=redis://redis-celery:6379/0
+      - REDIS_CELERY_RESULT_URL=redis://redis-celery:6379/1
+      - CELERY_BROKER_URL=redis://redis-celery:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis-celery:6379/1
+    depends_on:
+      - redis-celery
+      - postgres
+
+  flower:
+    image: mher/flower
+    command: celery flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis-celery:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis-celery
+
+volumes:
+  postgres_data:
+  redis-pubsub-data:
+  redis-celery-data:
