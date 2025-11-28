@@ -1,0 +1,24 @@
+# Add to requirements.txt
+
+# Existing dependencies
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+psycopg2-binary
+redis
+celery
+pydantic
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
+python-multipart
+aioredis
+python-dotenv
+httpx
+email-validator
+
+# Phase 3: Monitoring & Metrics
+prometheus-client>=0.19.0
+sentry-sdk[fastapi]>=1.40.0
