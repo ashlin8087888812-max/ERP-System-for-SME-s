@@ -18,5 +18,7 @@ def decode_token(token: str) -> Dict[str, Any]:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALG])
         return payload
-    except jwt.JWTError:
+    except jwt.JWTError as e:
+        from app.core.logging import logger
+        logger.error(f"JWT Decode Error: {str(e)} | Token: {token[:10]}...")
         return None

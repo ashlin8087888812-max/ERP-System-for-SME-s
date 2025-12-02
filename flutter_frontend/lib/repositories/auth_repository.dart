@@ -17,24 +17,42 @@ class AuthRepository {
       );
 
       final token = response.data['access_token'];
-      await _authStorage.saveToken(token);
-
+      final refreshToken = response.data['refresh_token'] as String?;
+      
+      // Decode JWT to extract user data
       Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
       
+      final userId = int.parse(decodedToken['sub']);
+      final userEmail = decodedToken['email'];
+      final companyId = decodedToken['company_id'];
+      final role = decodedToken['role'];
+      final fullName = decodedToken['full_name'];
+
+      // Save complete user session securely
+      await _authStorage.saveUserSession(
+        accessToken: token,
+        refreshToken: refreshToken,
+        userId: userId,
+        email: userEmail,
+        companyId: companyId,
+        role: role,
+        fullName: fullName,
+      );
+      
       return UserModel(
-        id: int.parse(decodedToken['sub']),
-        email: decodedToken['email'],
-        companyId: decodedToken['company_id'],
-        role: decodedToken['role'],
-        fullName: decodedToken['full_name'],
+        id: userId,
+        email: userEmail,
+        companyId: companyId,
+        role: role,
+        fullName: fullName,
       );
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
   Future<void> logout() async {
-    await _authStorage.deleteToken();
+    await _authStorage.clearAll();
   }
   
   Future<bool> isLoggedIn() async {

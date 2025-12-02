@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/pages/contacts/contacts_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 
@@ -40,7 +40,7 @@ class DashboardPage extends ConsumerWidget {
               icon: Icon(Icons.contacts),
               label: Text('Open Contacts'),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ContactsPage()));
+                context.go('/contacts');
               },
             ),
           ],

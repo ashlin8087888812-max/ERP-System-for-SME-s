@@ -1,0 +1,45 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: app-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: syncerity-api
+          __path__: /var/log/app/*.log
+    pipeline_stages:
+      # Parse JSON logs
+      - json:
+          expressions:
+            level: level
+            timestamp: timestamp
+            service: service
+            environment: environment
+            correlation_id: correlation_id
+            trace_id: trace_id
+            tenant_id: tenant_id
+            user_id: user_id
+      
+      # Extract labels (keep cardinality low!)
+      - labels:
+          level:
+          service:
+          environment:
+      
+      # Set timestamp
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      
+      # Output format
+      - output:
+          source: message

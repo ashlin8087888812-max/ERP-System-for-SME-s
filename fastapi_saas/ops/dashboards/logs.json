@@ -1,0 +1,124 @@
+{
+  "dashboard": {
+    "title": "FastAPI Application Logs",
+    "tags": ["logging", "fastapi", "syncerity"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Log Volume Over Time",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 24,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(count_over_time({service=\"syncerity-api\", environment=\"$environment\"}[$__interval]))",
+            "legendFormat": "Total Logs",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "title": "Logs by Level",
+        "type": "logs",
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 12,
+          "h": 10
+        },
+        "targets": [
+          {
+            "expr": "{service=\"syncerity-api\", environment=\"$environment\"} | json",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "title": "Error Rate",
+        "type": "stat",
+        "gridPos": {
+          "x": 12,
+          "y": 8,
+          "w": 6,
+          "h": 5
+        },
+        "targets": [
+          {
+            "expr": "sum(rate({service=\"syncerity-api\", level=\"ERROR\"}[5m]))",
+            "legendFormat": "Errors/sec",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 1, "color": "yellow"},
+                {"value": 5, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Request Duration p95",
+        "type": "stat",
+        "gridPos": {
+          "x": 18,
+          "y": 8,
+          "w": 6,
+          "h": 5
+        },
+        "targets": [
+          {
+            "expr": "quantile_over_time(0.95, {service=\"syncerity-api\"} | json | unwrap duration_ms [5m])",
+            "legendFormat": "p95 duration",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "title": "Logs by Correlation ID",
+        "type": "logs",
+        "gridPos": {
+          "x": 0,
+          "y": 18,
+          "w": 24,
+          "h": 10
+        },
+        "targets": [
+          {
+            "expr": "{service=\"syncerity-api\", correlation_id=\"$correlation_id\"} | json",
+            "refId": "A"
+          }
+        ]
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "environment",
+          "type": "query",
+          "label": "Environment",
+          "query": "label_values(environment)"
+        },
+        {
+          "name": "correlation_id",
+          "type": "textbox",
+          "label": "Correlation ID"
+        }
+      ]
+    }
+  }
+}

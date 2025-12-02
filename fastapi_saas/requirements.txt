@@ -22,3 +22,25 @@ email-validator
 # Phase 3: Monitoring & Metrics
 prometheus-client>=0.19.0
 sentry-sdk[fastapi]>=1.40.0
+
+# Enterprise Logging
+python-json-logger>=2.0.7         # Structured JSON logging
+
+# Grafana Loki
+python-logging-loki>=0.3.1        # Loki integration
+requests>=2.31.0                   # HTTP client for Loki
+
+# OpenTelemetry (pinned to avoid protobuf conflicts)
+opentelemetry-api==1.21.0
+opentelemetry-sdk==1.21.0
+opentelemetry-instrumentation-fastapi==0.42b0
+opentelemetry-instrumentation-sqlalchemy==0.42b0
+opentelemetry-instrumentation-redis==0.42b0
+opentelemetry-exporter-otlp==1.21.0
+opentelemetry-exporter-jaeger==1.21.0
+
+# SIEM Integration (CEF formatting can be done manually)
+
+# Audit & Compliance
+boto3>=1.28.0                     # S3 WORM storage (optional)
+cryptography>=41.0.0              # Event signing

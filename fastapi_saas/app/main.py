@@ -3,15 +3,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
 import uuid
+import logging
 import sentry_sdk
 from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
 from app.config import settings
 from app.api.v1 import auth, ws, scm, health, users, admin, contacts
 from app.middleware.tenant import tenant_middleware
 from app.middleware.metrics import PrometheusMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.request_logging import RequestLoggingMiddleware
+
+# Initialize enterprise logging FIRST
+from app.core.logging import logger
+from app.core import tracing
+
+logger.info(f"Starting {settings.PROJECT_NAME} in {settings.ENVIRONMENT} mode")
 
 
 # Initialize Sentry (if DSN is configured)
@@ -23,13 +32,18 @@ if settings.SENTRY_DSN:
             SqlalchemyIntegration(),
         ],
         traces_sample_rate=0.1,  # 10% of transactions for performance monitoring
-        environment=settings.PROJECT_NAME,
+        environment=settings.ENVIRONMENT,  # Use proper environment name
+        release=f"{settings.PROJECT_NAME}@1.0.0",
     )
+    logger.info("Sentry error tracking initialized")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+
+# Setup OpenTelemetry tracing
+tracing.setup_tracing(app)
 
 # CORS Middleware (first, so it applies to all responses)
 app.add_middleware(
@@ -39,7 +53,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# add middleware at import time
+
+# Request Logging Middleware (comprehensive observability)
+app.add_middleware(RequestLoggingMiddleware)
+
+# Rate Limiting Middleware
 app.add_middleware(
     RateLimitMiddleware,
     redis_url=settings.REDIS_URL
@@ -52,29 +70,40 @@ app.add_middleware(SecurityHeadersMiddleware)
 if settings.ENABLE_METRICS:
     app.add_middleware(PrometheusMiddleware)
 
-# Rate Limiting Middleware (if Redis is available)
-# @app.on_event("startup")
-# async def startup_event():
-#     """Initialize rate limiting on startup"""
-# try:
-#     from app.redis_client.client import get_redis_client
-#     from app.middleware.rate_limit import RateLimitMiddleware
+# Startup and shutdown events
+@app.on_event("startup")
+async def startup_event():
+    """Application startup tasks."""
+    logger.info(f"{settings.PROJECT_NAME} starting up...")
+    logger.info(f"Environment: {settings.ENVIRONMENT}")
+    logger.info(f"Log Level: {settings.LOG_LEVEL}")
+    logger.info(f"OpenTelemetry: {'Enabled' if settings.OTEL_ENABLED else 'Disabled'}")
+    logger.info(f"Loki: {'Enabled' if settings.LOKI_ENABLED else 'Disabled'}")
+    logger.info(f"Audit Logging: {'Enabled' if settings.AUDIT_LOG_ENABLED else 'Disabled'}")
     
-#     redis = await get_redis_client()
-#     app.add_middleware(RateLimitMiddleware, redis_client=redis)
-# except Exception as e:
-#     # Rate limiting disabled if Redis unavailable
-#     print(f"Rate limiting disabled: {e}")
+    # Setup database logging if enabled
+    if settings.LOG_SQL_QUERIES:
+        try:
+            from app.db.session import engine
+            from app.middleware.database_logging import setup_database_logging
+            setup_database_logging(engine)
+        except Exception as e:
+            logger.warning(f"Failed to setup database logging: {e}")
 
-# Correlation ID Middleware (for request tracing)
-@app.middleware("http")
-async def correlation_id_middleware(request: Request, call_next):
-    """Add correlation ID to each request for tracing"""
-    correlation_id = request.headers.get("X-Correlation-ID") or str(uuid.uuid4())
-    request.state.correlation_id = correlation_id
-    response = await call_next(request)
-    response.headers["X-Correlation-ID"] = correlation_id
-    return response
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Application shutdown tasks."""
+    logger.info(f"{settings.PROJECT_NAME} shutting down...")
+
+# Remove old correlation ID middleware (now handled by RequestLoggingMiddleware)
+# @app.middleware("http")
+# async def correlation_id_middleware(request: Request, call_next):
+#     """Add correlation ID to each request for tracing"""
+#     correlation_id = request.headers.get("X-Correlation-ID") or str(uuid.uuid4())
+#     request.state.correlation_id = correlation_id
+#     response = await call_next(request)
+#     response.headers["X-Correlation-ID"] = correlation_id
+#     return response
 
 # Tenant Middleware (must be after auth but before routes)
 # app.middleware("http")(tenant_middleware)
@@ -85,12 +114,17 @@ app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["u
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
 app.include_router(scm.router, prefix=f"{settings.API_V1_STR}/scm", tags=["scm"])
 app.include_router(contacts.router, prefix=f"{settings.API_V1_STR}/contacts", tags=["contacts"])
-app.include_router(ws.router, tags=["ws"])
+app.include_router(ws.router, prefix=settings.API_V1_STR, tags=["ws"])
 app.include_router(health.router, tags=["health"])
 
 @app.get("/")
 def root():
-    return {"message": "FastAPI SaaS Microservice is running"}
+    logger.debug("Root endpoint accessed")
+    return {
+        "message": "FastAPI SaaS Microservice is running",
+        "version": "1.0.0",
+        "environment": settings.ENVIRONMENT,
+    }
 
 # Prometheus metrics endpoint
 @app.get("/metrics")

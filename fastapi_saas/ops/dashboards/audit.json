@@ -1,0 +1,123 @@
+{
+    "dashboard": {
+        "title": "Audit Trail",
+        "tags": [
+            "audit",
+            "security",
+            "compliance"
+        ],
+        "timezone": "browser",
+        "panels": [
+            {
+                "title": "Authentication Events",
+                "type": "table",
+                "gridPos": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 24,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "{service=\"syncerity-api\"} | json | event_type=~\"AUTH.*\"",
+                        "refId": "A"
+                    }
+                ],
+                "transformations": [
+                    {
+                        "id": "organize",
+                        "options": {
+                            "excludeByName": {},
+                            "indexByName": {
+                                "timestamp": 0,
+                                "event_type": 1,
+                                "actor_pseudonym_id": 2,
+                                "outcome": 3,
+                                "ip_address": 4
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "title": "Failed Login Attempts",
+                "type": "stat",
+                "gridPos": {
+                    "x": 0,
+                    "y": 8,
+                    "w": 6,
+                    "h": 5
+                },
+                "targets": [
+                    {
+                        "expr": "sum(count_over_time({service=\"syncerity-api\"} | json | event_type=\"AUTH_LOGIN_FAILURE\" [24h]))",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "value": 0,
+                                    "color": "green"
+                                },
+                                {
+                                    "value": 10,
+                                    "color": "yellow"
+                                },
+                                {
+                                    "value": 50,
+                                    "color": "red"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "title": "Data Access Events",
+                "type": "logs",
+                "gridPos": {
+                    "x": 0,
+                    "y": 13,
+                    "w": 24,
+                    "h": 10
+                },
+                "targets": [
+                    {
+                        "expr": "{service=\"syncerity-api\"} | json | event_type=~\"DATA.*\" | tenant_id=\"$tenant_id\"",
+                        "refId": "A"
+                    }
+                ]
+            },
+            {
+                "title": "Security Violations",
+                "type": "table",
+                "gridPos": {
+                    "x": 0,
+                    "y": 23,
+                    "w": 24,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "{service=\"syncerity-api\"} | json | event_type=~\"SECURITY.*|AUTHZ_DENIED\"",
+                        "refId": "A"
+                    }
+                ]
+            }
+        ],
+        "templating": {
+            "list": [
+                {
+                    "name": "tenant_id",
+                    "type": "query",
+                    "label": "Tenant ID",
+                    "query": "label_values(tenant_id)"
+                }
+            ]
+        }
+    }
+}

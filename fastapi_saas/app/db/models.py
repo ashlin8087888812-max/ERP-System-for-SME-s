@@ -86,3 +86,26 @@ class EventProcessed(Base):
     result = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
+
+class RefreshToken(Base):
+    """
+    Stateful refresh token model for enterprise-grade authentication.
+    Stores hashed tokens (not raw) for security.
+    """
+    __tablename__ = "refresh_tokens"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    token_hash = Column(String(255), unique=True, nullable=False, index=True)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    revoked = Column(Boolean, default=False, nullable=False, index=True)
+    revoked_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    last_used_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    
+    # Optional metadata for security auditing
+    device_fingerprint = Column(String(255), nullable=True)
+    ip_address = Column(String(45), nullable=True)  # IPv6 max length
+    user_agent = Column(Text, nullable=True)
+    
+    user = relationship("User", backref="refresh_tokens")

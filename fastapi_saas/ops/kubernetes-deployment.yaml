@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syncerity-api
+  namespace: syncerity
+  labels:
+    app: syncerity-api
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: syncerity-api
+  template:
+    metadata:
+      labels:
+        app: syncerity-api
+        tier: backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+        loki.io/collect: "true"
+    spec:
+      containers:
+      - name: api
+        image: your-registry/syncerity-api:latest
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: logging-config
+              key: LOG_LEVEL
+        - name: LOG_FORMAT
+          valueFrom:
+            configMapKeyRef:
+              name: logging-config
+              key: LOG_FORMAT
+        - name: OTEL_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: logging-config
+              key: OTEL_ENABLED
+        - name: LOKI_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: logging-config
+              key: LOKI_ENABLED
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: database-url
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: secret-key
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: sentry-dsn
+              optional: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncerity-api
+  namespace: syncerity
+spec:
+  selector:
+    app: syncerity-api
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+  type: ClusterIP

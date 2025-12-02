@@ -15,7 +15,7 @@ if not user:
             db=db,
             name='Test Company',
             db_name='test_db',
-            odoo_host='http://localhost:8068'
+            odoo_host='http://host.docker.internal:8068'  # Use host.docker.internal for Docker-to-host communication
         )
     
     # Create password hash directly with bcrypt

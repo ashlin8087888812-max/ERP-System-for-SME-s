@@ -27,10 +27,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.default_limit = 60
         self.login_limit = 5
         
-        # Endpoints with custom limits
+        # Endpoints with custom limits (prefix matching)
         self.custom_limits = {
             "/api/v1/auth/login": self.login_limit,
             "/api/v1/auth/register": self.login_limit,
+            "/api/v1/contacts": 120,  # Higher limit for contacts endpoint
         }
     
     async def dispatch(self, request: Request, call_next: Callable):
@@ -53,8 +54,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # 4. Get IP
         client_ip = request.client.host if request.client else "unknown"
 
-        # 5. Decide limit
-        limit = self.custom_limits.get(request.url.path, self.default_limit)
+        # 5. Decide limit using prefix matching
+        limit = self.default_limit
+        for path_prefix, path_limit in self.custom_limits.items():
+            if request.url.path.startswith(path_prefix):
+                limit = path_limit
+                break
 
         # 6. Build Redis key
         key = f"rate_limit:{client_ip}:{request.url.path}"
