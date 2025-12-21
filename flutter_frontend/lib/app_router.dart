@@ -6,6 +6,7 @@ import '../pages/dashboard_page.dart';
 import '../pages/contacts/contacts_page.dart';
 import '../pages/contacts/contact_form_page.dart';
 import '../pages/contacts/contact_details_page.dart';
+import '../pages/sidebar_menu.dart';
 
 class AppRouter {
   static GoRouter router(Ref ref) {
@@ -63,6 +64,10 @@ class AppRouter {
               ],
             ),
           ],
+        ),
+        GoRoute(
+          path: '/menu',
+          builder: (context, state) => const SidebarMenu(),
         ),
       ],
     );

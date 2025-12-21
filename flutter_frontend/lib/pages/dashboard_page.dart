@@ -14,6 +14,12 @@ class DashboardPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            context.push('/menu');
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
