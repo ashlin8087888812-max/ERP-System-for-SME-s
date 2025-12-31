@@ -32,7 +32,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Syncerity',
+      title: 'Gestace',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,

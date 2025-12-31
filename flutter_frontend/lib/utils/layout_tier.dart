@@ -23,6 +23,11 @@ final layoutTierProvider =
   (ref) => LayoutTierNotifier(),
 );
 
+final layoutOrientationProvider =
+    StateNotifierProvider<LayoutOrientationNotifier, Orientation>(
+  (ref) => LayoutOrientationNotifier(),
+);
+
 /// =======================================================
 /// Pure function: Size → LayoutTier
 /// Safe to reuse anywhere (tests, web, desktop)
@@ -30,9 +35,9 @@ final layoutTierProvider =
 
 LayoutTier computeLayoutTier(Size size) {
   final shortest = size.shortestSide;
-  if (shortest < 300) return LayoutTier.compact;
-  if (shortest < 600) return LayoutTier.mobile;
-  if (shortest < 800) return LayoutTier.tablet;
+  if (shortest < 600) return LayoutTier.compact;
+  if (shortest < 700) return LayoutTier.mobile;
+  if (shortest < 900) return LayoutTier.tablet;
   return LayoutTier.desktop;
 }
 
@@ -55,3 +60,13 @@ class LayoutTierNotifier extends StateNotifier<LayoutTier> {
   }
 }
 
+class LayoutOrientationNotifier extends StateNotifier<Orientation> {
+  LayoutOrientationNotifier() : super(Orientation.portrait);
+
+  void updateFromOrientation(Orientation orientation) {
+    if (orientation != state) {
+      state = orientation;
+      print(orientation);
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/pages/utils/layout_tier.dart';
+import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// =======================================================
@@ -23,21 +23,26 @@ class AdaptiveLayout extends ConsumerStatefulWidget {
 class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   Size? _lastSize;
+  Orientation? _lastOrientation;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
 
     // Prevent redundant scheduling
-    if (_lastSize == size) return;
+    if (_lastSize == size && _lastOrientation == orientation) return;
     _lastSize = size;
-
+    _lastOrientation = orientation;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(layoutTierProvider.notifier)
           .updateFromSize(size);
+      ref
+          .read(layoutOrientationProvider.notifier)
+          .updateFromOrientation(orientation);
     });
   }
 

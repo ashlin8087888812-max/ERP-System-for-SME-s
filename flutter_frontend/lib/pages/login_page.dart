@@ -1,6 +1,5 @@
-import 'package:flumpose/flumpose.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/pages/utils/palette.dart';
+import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 import '../providers/auth_provider.dart';
@@ -65,310 +64,378 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Widget _buildMobileLayout(BuildContext context, AuthState authState) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Logo Card
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 350, minHeight: 320),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('SYN', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
-                const Text('CER', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
-                const Text('ELY', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
-              ],
-            )
-            .align(const Alignment(-0.6, -0.8))
-            .width(double.infinity)
-            .decorate((d) => d.color(const Color(0xFFD9D9D9)).circular(16)),
-          ),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo Card
+              // Previously: .align(-0.6, -0.8).width(double.infinity).decorate(...)
+              Container(
+                width: double.infinity,
+                constraints: const BoxConstraints(maxWidth: 350, minHeight: 320),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD9D9D9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Align(
+                  alignment: const Alignment(-0.6, -0.8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                       Text('SYN', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
+                       Text('CER', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
+                       Text('ELY', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
+                    ],
+                  ),
+                ),
+              ),
 
-          const SizedBox(height: 40),
+              const SizedBox(height: 40),
 
-          // Login Using Label
-          const Text('LOGIN USING', style: TextStyle(fontFamily: 'PressStart2P', fontSize: 10, color: Colors.white)),
-          const SizedBox(height: 16),
+              // Login Using Label
+              const Text('LOGIN USING', style: TextStyle(fontFamily: 'PressStart2P', fontSize: 10, color: Colors.white)),
+              const SizedBox(height: 16),
 
-          // Login Form
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 350),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  // Email Row with Button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
+              // Login Form
+              // Previously: Container... .pad(10).decorate(...)
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 350),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD9D9D9),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Email Row with Button
+                        Row(
+                          children: [
+                            Expanded(
+                              // Previously: Container... .decorate(...)
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.black12,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: TextFormField(
+                                  controller: _emailController,
+                                  style: const TextStyle(fontFamily: 'Practa', fontSize: 14),
+                                  textAlignVertical: const TextAlignVertical(y: 0.2),
+                                  textAlign: TextAlign.end,
+                                  decoration: const InputDecoration(
+                                    hintText: 'EMAIL',
+                                    hintStyle: TextStyle(fontFamily: 'Practa', fontSize: 12, color: Colors.black54),
+                                    prefixIcon: Padding(
+                                      padding: EdgeInsets.only(left: 16.0, top: 8),
+                                      child: tabler.MailFilled(color: Colors.black87, height: 35),
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Submit Button
+                            // Previously: Container... .inkTap(...)
+                            Material(
+                              color: authState.isLoading ? palette.primary : const Color(0xff1c1c1c),
+                              borderRadius: BorderRadius.circular(30),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(30),
+                                splashColor: palette.primary,
+                                onTap: authState.isLoading
+                                    ? null // Disable tap when loading
+                                    : () {
+                                        if (_formKey.currentState!.validate()) {
+                                          ref.read(authProvider.notifier).login(
+                                                _emailController.text,
+                                                _passwordController.text,
+                                              );
+                                        }
+                                      },
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  padding: EdgeInsets.all(authState.isLoading ? 4 : 12),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: authState.isLoading
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 6,
+                                            valueColor: AlwaysStoppedAnimation<Color>(palette.black),
+                                          ),
+                                        )
+                                      : tabler.ArrowRightToArc(
+                                          color: authState.isLoading ? palette.black : const Color(0xFFD9D9D9),
+                                          height: 12,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Password Field
+                        // Previously: Container... .decorate(...)
+                        Container(
                           height: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.black12,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                           child: TextFormField(
-                            controller: _emailController,
+                            controller: _passwordController,
+                            obscureText: true,
                             style: const TextStyle(fontFamily: 'Practa', fontSize: 14),
-                            textAlignVertical: const TextAlignVertical(y: 0.2),
+                            textAlignVertical: const TextAlignVertical(y: 0),
                             textAlign: TextAlign.end,
                             decoration: const InputDecoration(
-                              hintText: 'EMAIL',
+                              hintText: 'PASSWORD',
                               hintStyle: TextStyle(fontFamily: 'Practa', fontSize: 12, color: Colors.black54),
-                              prefixIcon: Padding(
-                                padding: EdgeInsets.only(left: 16.0, top: 8),
-                                child: tabler.MailFilled(color: Colors.black87, height: 35),
-                              ),
+                              prefixIcon: tabler.Password(color: Colors.black87, height: 80),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(horizontal: 16),
                             ),
                           ),
-                        )
-                        .decorate((d) => d.color(Colors.black12).circular(30)),
-                      ),
-                      const SizedBox(width: 12),
-                      // Submit Button
-                      Container(
-                        width: 60,
-                        height: 60,
-                        padding: EdgeInsets.all(authState.isLoading ? 4 : 12),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
                         ),
-                        child: authState.isLoading
-                            ? CircularProgressIndicator(
-                                strokeWidth: 6,
-                                valueColor: AlwaysStoppedAnimation<Color>(palette.black),
-                              ).pad(12)
-                            : tabler.ArrowRightToArc(
-                                color: authState.isLoading ? palette.black : const Color(0xFFD9D9D9),
-                                height: 12,
-                              ),
-                      ).inkTap(
-                        onTap: authState.isLoading
-                            ? () {}
-                            : () {
-                                if (_formKey.currentState!.validate()) {
-                                  ref.read(authProvider.notifier).login(
-                                        _emailController.text,
-                                        _passwordController.text,
-                                      );
-                                }
-                              },
-                        splashColor: palette.primary,
-                        color: authState.isLoading ? palette.primary : const Color(0xff1c1c1c),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Password Field
-                  Container(
-                    height: 60,
-                    child: TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      style: const TextStyle(fontFamily: 'Practa', fontSize: 14),
-                      textAlignVertical: const TextAlignVertical(y: 0),
-                      textAlign: TextAlign.end,
-                      decoration: const InputDecoration(
-                        hintText: 'PASSWORD',
-                        hintStyle: TextStyle(fontFamily: 'Practa', fontSize: 12, color: Colors.black54),
-                        prefixIcon: tabler.Password(color: Colors.black87, height: 80),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                      ),
+                      ],
                     ),
-                  )
-                  .decorate((d) => d.color(Colors.black12).circular(30)),
-                ],
+                  ),
+                ),
               ),
-            )
-            .pad(10)
-            .decorate((d) => d.color(const Color(0xFFD9D9D9)).circular(30)),
-          ),
 
-          const SizedBox(height: 20),
-          _buildQrSection(),
-        ],
-      ).pad(24).alignCenter(),
+              const SizedBox(height: 20),
+              _buildQrSection(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildDesktopLayout(BuildContext context, AuthState authState) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 600),
-      child: Row(
-        children: [
-          // Left Card
-          Expanded(
-            flex: 5,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('SYN', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
-                const Text('CER', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
-                const Text('ELY', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
-              ],
-            )
-                .alignCenter()
-                .decorate((d) => d.color(const Color(0xFFD9D9D9)).circular(4)), 
-          ),
-          const SizedBox(width: 60),
-
-          // Right Side
-          Expanded(
-            flex: 4,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text('LOGIN USING', style: TextStyle(fontFamily: 'PressStart2P', fontSize: 12, color: Colors.white)),
-                const SizedBox(height: 20),
-
-                // Desktop Login Form
-                ConstrainedBox(
-                 constraints: const BoxConstraints(maxWidth: 350),
-                 child: Form(
-                  key: _formKey,
+    return Center(
+      // Previously: ... .pad(0) .alignCenter() (on the Row)
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 600),
+        child: Row(
+          children: [
+            // Left Card
+            Expanded(
+              flex: 5,
+              // Previously: ... .alignCenter().decorate(...)
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD9D9D9),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Center(
                   child: Column(
-                    children: [
-                      // Email Row with Button
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                       Text('SYN', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
+                       Text('CER', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
+                       Text('ELY', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 60),
+
+            // Right Side
+            Expanded(
+              flex: 4,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('LOGIN USING', style: TextStyle(fontFamily: 'PressStart2P', fontSize: 12, color: Colors.white)),
+                  const SizedBox(height: 20),
+
+                  // Desktop Login Form
+                  // Previously: ... .pad(14).decorate(...)
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 350),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD9D9D9),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            // Email Row with Button
+                            Row(
+                              children: [
+                                Expanded(
+                                  // Previously: ... .decorate(...)
+                                  child: Container(
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black12,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _emailController,
+                                      style: const TextStyle(fontFamily: 'Practa', fontSize: 14),
+                                      textAlignVertical: const TextAlignVertical(y: 0.2),
+                                      textAlign: TextAlign.end,
+                                      decoration: const InputDecoration(
+                                        hintText: 'EMAIL',
+                                        hintStyle: TextStyle(fontFamily: 'Practa', fontSize: 12, color: Colors.black54),
+                                        prefixIcon: Padding(
+                                          padding: EdgeInsets.only(left: 16.0, top: 8),
+                                          child: tabler.MailFilled(color: Colors.black87, height: 35),
+                                        ),
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Submit Button
+                                // Previously: ... .inkTap(...)
+                                Material(
+                                  color: authState.isLoading ? palette.primary : const Color(0xff1c1c1c),
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(30),
+                                    splashColor: palette.primary,
+                                    onTap: authState.isLoading
+                                        ? null
+                                        : () {
+                                            if (_formKey.currentState!.validate()) {
+                                              ref.read(authProvider.notifier).login(
+                                                    _emailController.text,
+                                                    _passwordController.text,
+                                                  );
+                                            }
+                                          },
+                                    child: Container(
+                                      width: 60,
+                                      height: 60,
+                                      padding: EdgeInsets.all(authState.isLoading ? 4 : 12),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: authState.isLoading
+                                          ? Padding(
+                                              padding: const EdgeInsets.all(12.0),
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 6,
+                                                valueColor: AlwaysStoppedAnimation<Color>(palette.black),
+                                              ),
+                                            )
+                                          : tabler.ArrowRightToArc(
+                                              color: authState.isLoading ? palette.black : const Color(0xFFD9D9D9),
+                                              height: 12,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 8),
+                            // Password Field
+                            Container(
                               height: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.black12,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                               child: TextFormField(
-                                controller: _emailController,
+                                controller: _passwordController,
+                                obscureText: true,
                                 style: const TextStyle(fontFamily: 'Practa', fontSize: 14),
-                                textAlignVertical: const TextAlignVertical(y: 0.2),
+                                textAlignVertical: const TextAlignVertical(y: 0),
                                 textAlign: TextAlign.end,
                                 decoration: const InputDecoration(
-                                  hintText: 'EMAIL',
+                                  hintText: 'PASSWORD',
                                   hintStyle: TextStyle(fontFamily: 'Practa', fontSize: 12, color: Colors.black54),
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.only(left: 16.0, top: 8),
-                                    child: tabler.MailFilled(color: Colors.black87, height: 35),
-                                  ),
+                                  prefixIcon: tabler.Password(color: Colors.black87, height: 80),
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.symmetric(horizontal: 16),
                                 ),
                               ),
-                            )
-                            .decorate((d) => d.color(Colors.black12).circular(30)),
-                          ),
-                          const SizedBox(width: 12),
-                          // Submit Button
-                          Container(
-                            width: 60,
-                            height: 60,
-                            padding: EdgeInsets.all(authState.isLoading ? 4 : 12),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
                             ),
-                            child: authState.isLoading
-                                ? CircularProgressIndicator(
-                                    strokeWidth: 6,
-                                    valueColor: AlwaysStoppedAnimation<Color>(palette.black),
-                                  ).pad(12)
-                                : tabler.ArrowRightToArc(
-                                    color: authState.isLoading ? palette.black : const Color(0xFFD9D9D9),
-                                    height: 12,
-                                  ),
-                          ).inkTap(
-                            onTap: authState.isLoading
-                                ? () {}
-                                : () {
-                                    if (_formKey.currentState!.validate()) {
-                                      ref.read(authProvider.notifier).login(
-                                            _emailController.text,
-                                            _passwordController.text,
-                                          );
-                                    }
-                                  },
-                            splashColor: palette.primary,
-                            color: authState.isLoading ? palette.primary : const Color(0xff1c1c1c),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-                      // Password Field
-                      Container(
-                        height: 60,
-                        child: TextFormField(
-                          controller: _passwordController,
-                          obscureText: true,
-                          style: const TextStyle(fontFamily: 'Practa', fontSize: 14),
-                          textAlignVertical: const TextAlignVertical(y: 0),
-                          textAlign: TextAlign.end,
-                          decoration: const InputDecoration(
-                            hintText: 'PASSWORD',
-                            hintStyle: TextStyle(fontFamily: 'Practa', fontSize: 12, color: Colors.black54),
-                            prefixIcon: tabler.Password(color: Colors.black87, height: 80),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                          ),
+                          ],
                         ),
-                      )
-                      .decorate((d) => d.color(Colors.black12).circular(30)),
-                    ],
+                      ),
+                    ),
                   ),
-                )
-                .pad(14)
-                .decorate((d) => d.color(const Color(0xFFD9D9D9)).circular(30)),
-               ),
 
-                const SizedBox(height: 30),
-                _buildQrSection(),
-              ],
+                  const SizedBox(height: 30),
+                  _buildQrSection(),
+                ],
+              ),
             ),
-          ),
-        ],
-      )
-          .pad(0)
-          .alignCenter(),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildQrSection() {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 350),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // QR Text Left (Vertical "USE QR")
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              SizedBox(width: 10),
-              Text('U\nS\nE', style: TextStyle(fontFamily: 'PressStart2P', fontSize: 20, height: 1, fontWeight: FontWeight.bold)),
-              SizedBox(width: 6),
-              Text('Q\nR', style: TextStyle(fontFamily: 'First', fontSize: 30, height: 1, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(width: 16),
-          const Text(
-            'OR',
-            style: TextStyle(
-              fontFamily: 'PressStart2P',
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+      child: Container(
+        height: 80,
+        // Previously: .padH(5).padV(5) -> EdgeInsets.symmetric
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        decoration: BoxDecoration(
+          color: const Color(0xFFD9D9D9),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // QR Text Left (Vertical "USE QR")
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                SizedBox(width: 10),
+                Text('U\nS\nE', style: TextStyle(fontFamily: 'PressStart2P', fontSize: 20, height: 1, fontWeight: FontWeight.bold)),
+                SizedBox(width: 6),
+                Text('Q\nR', style: TextStyle(fontFamily: 'First', fontSize: 30, height: 1, fontWeight: FontWeight.bold)),
+              ],
             ),
-          ),
-          const SizedBox(width: 16),
-          // QR Icon Right
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: const tabler.Qrcode(color: Colors.black87, height: 80),
-          ),
-        ],
-      )
-          .padH(5).padV(5)
-          .height(80)
-          .decorate((d) => d.color(const Color(0xFFD9D9D9)).circular(20)),
+            const SizedBox(width: 16),
+            const Text(
+              'OR',
+              style: TextStyle(
+                fontFamily: 'PressStart2P',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 16),
+            // QR Icon Right
+            const FittedBox(
+              fit: BoxFit.scaleDown,
+              child: tabler.Qrcode(color: Colors.black87, height: 80),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
