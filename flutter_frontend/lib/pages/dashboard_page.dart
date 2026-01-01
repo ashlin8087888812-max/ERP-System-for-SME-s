@@ -28,6 +28,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
     menuAnimationController = AnimationController(vsync: this);
   }
 
+  @override
+  void dispose() {
+    menuAnimationController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,25 +71,25 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
       // ),
       backgroundColor: palette.white,
       body: AdaptiveLayout(
-        child: Hero(
-          tag: 'dashboard_page',
-          child: Stack(
-            children: [
-              SizedBox(height: height,width: width,),
-              // Menu button and Navbar
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                
-                left: layoutIsMobile? layoutIsPortrait? 14:0:8,
-                bottom: layoutIsMobile? 0:10,
-                width: layoutIsPortrait? width-14:60,
-                height: layoutIsPortrait? 60:height - 30,
-                child: Flex(
-                  direction: layoutIsPortrait? Axis.horizontal: Axis.vertical,
-                  children: [
-                    HoverIcon(
+        child: Stack(
+          children: [
+            SizedBox(height: height,width: width,),
+            // Menu button and Navbar
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              
+              left: layoutIsMobile? layoutIsPortrait? 14:0:8,
+              bottom: layoutIsMobile? 0:10,
+              width: layoutIsPortrait? width-14:60,
+              height: layoutIsPortrait? 60:height - 30,
+              child: Flex(
+                direction: layoutIsPortrait? Axis.horizontal: Axis.vertical,
+                children: [
+                  Hero(
+                    tag: 'menu_icon',
+                    child: HoverIcon(
                       icon: Lottie.asset(
-                        'assets/anims/menu_to_chevron_left.json',
+                        'assets/anims/menu_to_chevron_down.json',
                         height: 30,
                         width: 30,
                         fit: BoxFit.contain,
@@ -103,22 +109,34 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
                         context.go('/menu');
                       },
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only( top: layoutIsPortrait? 0:14,left: layoutIsPortrait? 14:0),
-                        child: Navbar()
-                      ),
-                    )
-                  ],
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only( top: layoutIsPortrait? 0:14,left: layoutIsPortrait? 14:0),
+                      child: Navbar()
+                    ),
+                  )
+                ],
+              ),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              left: layoutIsMobile? layoutIsPortrait? 20:60:80,
+              top: layoutIsMobile? layoutIsPortrait? 10:20:25,
+              child: Hero(
+                tag:'gestace_title',
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Transform.scale(
+                    scale: 0.8,
+                    alignment: Alignment.topLeft,
+                    child: GestaceTitle(),
+                  ),
                 ),
               ),
-              Transform.scale(
-                scale: 0.8,
-                alignment: Alignment.topLeft,
-                child: GestaceTitle()),
-              
-            ],
-          ),
+            ),
+            
+          ],
         ),
       ),
     );

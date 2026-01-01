@@ -32,6 +32,10 @@ class Navbar extends ConsumerWidget {
     final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    Widget divider =  layoutIsPortrait?
+    VerticalDivider(indent: 15,endIndent: 15,color: palette.black.withOpacity(0.2), thickness: 0.3,):
+    Divider(indent: 15,endIndent: 15,color: palette.black.withOpacity(0.2), thickness: 0.8,);
+    
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -49,10 +53,10 @@ class Navbar extends ConsumerWidget {
       ),
 
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(20))
+        borderRadius: BorderRadius.all(Radius.circular(layoutIsMobile?0:20))
             .copyWith(
               topRight:Radius.circular(layoutIsPortrait? 0:120),
-              topLeft:Radius.circular(layoutIsPortrait? 120:20),
+              topLeft:Radius.circular(layoutIsPortrait? 120:layoutIsMobile?0:20),
               ),
         child: InnerShadow(
           shadows: [
@@ -73,10 +77,10 @@ class Navbar extends ConsumerWidget {
             height: layoutIsPortrait?60:height,
             decoration: BoxDecoration(
               color: palette.extras[0],
-              borderRadius: const BorderRadius.all(Radius.circular(20))
+              borderRadius: BorderRadius.all(Radius.circular(layoutIsMobile?0:20))
             .copyWith(
               topRight:Radius.circular(layoutIsPortrait? 0:120),
-              topLeft:Radius.circular(layoutIsPortrait? 120:20),
+              topLeft:Radius.circular(layoutIsPortrait? 120:layoutIsMobile?0:20),
               ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 5),
@@ -131,10 +135,11 @@ class Navbar extends ConsumerWidget {
                     }
                   ),
                 ),
-                Divider(indent: 15,endIndent: 15,color: palette.black.withOpacity(0.2), thickness: 0.8,),
+                divider,
                 spacing-5,
                 HoverIcon(
                   label: 'Settings',
+                  elevate: layoutIsPortrait? false:true,
                   icon: tabler.SettingsFilled(color: palette.extras[1],),
                   onTap: () => context.go('/settings'),
                 ),

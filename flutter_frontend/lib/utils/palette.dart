@@ -111,9 +111,9 @@ ColorPalette OGPalette = ColorPalette(
 );
 
 ColorPalette palette = ColorPalette(
-  primary:Color(0xFF86BBD8),  
-  secondary:Color(0xFFBB4430),
-  tertiary: Color(0xFFF3DFA2),
+  primary:Color(0xFFD7F0FF),  
+  secondary:Color(0xFFFFEFD7),
+  tertiary: Color(0xFFFFD7D8),
   black: Color(0xFF1C1C1C),
   white: Color(0xFFFFFFFF),
   extras: [

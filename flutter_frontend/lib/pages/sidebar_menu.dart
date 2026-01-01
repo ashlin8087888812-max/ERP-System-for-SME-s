@@ -1,24 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
+import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/utils/stripes_painter.dart';
 import 'package:flutter_frontend/utils/visibility_observer.dart';
+import 'package:flutter_frontend/widgets/gestace_title.dart';
+import 'package:flutter_frontend/widgets/sidebar/branch_browser.dart';
+import 'package:flutter_frontend/widgets/sidebar/greetings.dart';
+import 'package:flutter_frontend/widgets/hover_icon.dart';
+import 'package:flutter_frontend/widgets/sidebar/module_cards.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 import '../providers/auth_provider.dart';
 
-class SidebarMenu extends ConsumerWidget {
+class SidebarMenu extends ConsumerStatefulWidget {
   const SidebarMenu({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SidebarMenu> createState() => _SidebarMenuState();
+}
+
+class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderStateMixin {
+  late final AnimationController menuAnimationController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    menuAnimationController = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    menuAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
-    final userName = user?.fullName ?? user?.email ?? 'User';
+    final layoutTier = ref.watch(layoutTierProvider);
+    final layoutOrientation = ref.watch(layoutOrientationProvider);
+    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
+    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
+    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
+    final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
+    const SizedBox spacing  = SizedBox(height: 15);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1C),
+      backgroundColor: palette.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -29,134 +65,75 @@ class SidebarMenu extends ConsumerWidget {
                 spacing: 34,
                 stripeWidth: 0.5,
               ))),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              top:45,
+              left:45,
+              child:Hero(tag:'gestace_title',child: Material(
+                type: MaterialType.transparency,
+                child: Transform.scale(
+                  scale:1.3,
+                  alignment: Alignment.topLeft,
+                  child: GestaceTitle())))),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              bottom:45,
+              left:45,
+              width: width/2.2,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    'Yours,',
-                    style: GoogleFonts.lexend(
-                      color: const Color(0xFF707070),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    'SYNCERELY',
-                    style: GoogleFonts.lexend(
-                      color: const Color(0xFFFFFFFF),
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    'Greetings,',
-                    style: GoogleFonts.lexend(
-                      color: const Color(0xFF707070),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    userName,
-                    style: GoogleFonts.lexend(
-                      color: const Color(0xFFECECEC),
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'which module would you like to check out?',
-                    style: GoogleFonts.lexend(
-                      color: const Color(0xFFECECEC),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF3E3E3E),
-                      borderRadius: BorderRadius.circular(44),
-                      border: Border.all(color: const Color(0xFF707070), width: 0.4),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF555555),
-                            borderRadius: BorderRadius.circular(26),
-                            border: Border.all(color: const Color(0xFF7F7F7F), width: 0.4),
-                          ),
-                          child: Row(
-                            children: [
-                              const tabler.Search(color: Color(0xFF1C1C1C), height: 24),
-                              const SizedBox(width: 12),
-                              Text(
-                                'Search',
-                                style: GoogleFonts.lexend(
-                                  color: const Color(0xFF8B8B8B),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const Spacer(),
-                              const tabler.Pin(color: Color(0xFF1C1C1C), height: 24),
-                            ],
-                          ),
+                   Hero(
+                    tag: 'menu_icon',
+                    child: HoverIcon(
+                      icon: Opacity( 
+                        opacity: 0.5,
+                        child: Lottie.asset(
+                          'assets/anims/menu_to_chevron_down.json',
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.contain,
+                          repeat: false,
+                          controller: menuAnimationController,
+                          onLoaded: (composition) {
+                            menuAnimationController
+                              ..duration = composition.duration
+                              ..forward();
+                          },
                         ),
-                        const SizedBox(height: 16),
-                        GridView.count(
-                          shrinkWrap: true,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 1.3,
-                          children: [
-                            _buildMenuItem(
-                              context,
-                              iconBuilder: (color) => tabler.AddressBook(color: color, height: 48),
-                              label: 'Contacts',
-                              isSelected: true,
-                              onTap: () => context.push('/contacts'),
-                            ),
-                            _buildMenuItem(
-                              context,
-                              iconBuilder: (color) => tabler.MessageCircle(color: color, height: 48),
-                              label: 'Discuss',
-                              isSelected: false,
-                              onTap: () {},
-                            ),
-                            _buildMenuItem(
-                              context,
-                              iconBuilder: (color) => tabler.UserCircle(color: color, height: 48),
-                              label: 'Profiles',
-                              isSelected: false,
-                              onTap: () {},
-                            ),
-                            _buildMenuItem(
-                              context,
-                              iconBuilder: (color) => tabler.Settings(color: color, height: 48),
-                              label: 'Settings',
-                              isSelected: false,
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
+                      label: 'Menu',
+                      elevate: false,
+                      onTap: () {
+                        menuAnimationController.stop();
+                        menuAnimationController.reverse();
+                        context.push('/dashboard');
+                      },
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  ModuleCards(
+                    colors: [
+                      palette.tertiary,
+                      palette.secondary,
+                      palette.primary,
+                    ],
+                    spacing: 14,
+                  ),
+                  spacing*6,
+                  Row(
+                    children: [
+                      GreetingWidget(name: user?.fullName ?? user?.email ?? 'User',),
+                    ],
+                  ),
                 ],
+              )
               ),
-            ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                top:45,
+                right:45,
+                width: width/2.4,
+                child: BranchBrowser())
           ],
         ),
       ),

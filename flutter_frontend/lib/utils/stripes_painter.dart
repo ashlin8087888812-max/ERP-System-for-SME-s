@@ -40,7 +40,7 @@ class _StripesBackgroundState extends State<StripesBackground>
     )..repeat();
 
     if (kIsWeb) {
-      _createStripeTile(widget.color).then((img) {
+      _createStripeTile(widget.color,  widget.stripeWidth, widget.spacing).then((img) {
         if (mounted) setState(() => _tile = img);
       });
     }
@@ -171,11 +171,9 @@ class _ShaderStripesPainter extends CustomPainter {
 /// Stripe tile generator (web)
 /// ===============================
 
-Future<ui.Image> _createStripeTile(Color color) async {
+Future<ui.Image> _createStripeTile(Color color, double stripeWidth, double spacing) async {
   const double size = 128.0;
-  const double spacing = 24;
-  const double stripeWidth = 6;
-  const double angle = 0.6;
+  const double angle = 0.0;
 
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);

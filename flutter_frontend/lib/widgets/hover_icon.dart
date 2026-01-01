@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
-class HoverIcon extends StatefulWidget {
+class HoverIcon extends ConsumerStatefulWidget {
   final String label;
   final VoidCallback onTap;
   final Widget icon;
@@ -17,10 +19,10 @@ class HoverIcon extends StatefulWidget {
   });
 
   @override
-  State<HoverIcon> createState() => _HoverIconState();
+  ConsumerState<HoverIcon> createState() => _HoverIconState();
 }
 
-class _HoverIconState extends State<HoverIcon>
+class _HoverIconState extends ConsumerState<HoverIcon>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _entry;
   bool _hovering = false;
@@ -54,18 +56,19 @@ class _HoverIconState extends State<HoverIcon>
     super.dispose();
   }
 
-  void _showOverlay() {
+  void _showOverlay(bool layoutIsPortrait) {
+    setState(() {
+      _hovering = true;
+    });
     if (_entry != null || !widget.elevate) return;
 
     final box = context.findRenderObject() as RenderBox;
     final pos = box.localToGlobal(Offset.zero);
-    setState(() {
-      _hovering = true;
-    });
+    
     _entry = OverlayEntry(
       builder: (_) => Positioned(
-        left: pos.dx + box.size.width/1.2,
-        top: pos.dy,
+        left: pos.dx +( layoutIsPortrait? -box.size.width: box.size.width/1.2),
+        top: pos.dy -( layoutIsPortrait? box.size.height+20: 0),
         child: IgnorePointer(
           child: Material(
             color: Colors.transparent,
@@ -95,30 +98,38 @@ class _HoverIconState extends State<HoverIcon>
   }
 
   void _hideOverlay() {
-    
+    setState(() {
+      _hovering = false;
+    });
     if (_entry == null || !widget.elevate) return;
 
     _controller.reverse().then((_) {
       _entry?.remove();
       _entry = null;
     });
-    setState(() {
-      _hovering = false;
-    });
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => _showOverlay(),
-      onExit: (_) => _hideOverlay(),
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          transform: Matrix4.translationValues(0, (_hovering && widget.elevate) ? -4 : 0, 0),
-          child: widget.icon,
+    final layoutTier = ref.watch(layoutTierProvider);
+    final layoutOrientation = ref.watch(layoutOrientationProvider);
+    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
+    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
+    
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: MouseRegion(
+        onEnter: (_) => _showOverlay(layoutIsPortrait),
+        onExit: (_) => _hideOverlay(),
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          color: Colors.transparent, // Stable hit-test target
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            transform: Matrix4.translationValues(0, (_hovering) ? -4 : 0, 0),
+            child: widget.icon,
+          ),
         ),
       ),
     );

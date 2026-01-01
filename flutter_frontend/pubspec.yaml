@@ -121,6 +121,7 @@ flutter:
     - family: Lexend
       fonts:
         - asset: assets/fonts/Lexend.ttf
+        
     - family: Raster
       fonts:
         - asset: assets/fonts/Raster.ttf
