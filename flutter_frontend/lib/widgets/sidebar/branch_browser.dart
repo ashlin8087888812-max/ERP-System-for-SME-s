@@ -81,7 +81,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(21),
-            border: Border.all(color: palette.black, width: 1),
+            border: Border.all(color: palette.black, width: 0.8),
           ),
           child: TextField(
             onChanged: (value) => setState(() => _searchQuery = value),
@@ -91,21 +91,24 @@ class _BranchBrowserState extends State<BranchBrowser> {
               
               hintStyle: TextStyle(
                 color: palette.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
+                fontSize: 18,
+                fontWeight: FontWeight.w100,
                 fontFamily: 'Lexend',
+                fontVariations: [
+                  FontVariation('wght', 300),
+                ],
               ),
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(3.0),
-                child: tabler.Search(),
+                child: tabler.Search(strokeWidth: 1.2,),
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(bottom: 16, ),
+              contentPadding: const EdgeInsets.only(bottom: 13, ),
             ),
           ),
         ),
         
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         
         // Filter Chips
         Row(
@@ -145,17 +148,19 @@ class _BranchBrowserState extends State<BranchBrowser> {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? Colors.black : palette.black,
-            width: 1,
+            width: 0.8,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
             color: isSelected ? Colors.white : Colors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            letterSpacing: -0.5,
+            fontSize: 16,
+            letterSpacing: -0.2,
             fontFamily: 'Lexend',
+            fontVariations: [
+              FontVariation('wght', 300),
+            ],
           ),
         ),
       ),

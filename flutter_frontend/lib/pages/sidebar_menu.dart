@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/utils/adaptive_layout.dart';
+import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
+import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/utils/stripes_painter.dart';
 import 'package:flutter_frontend/utils/visibility_observer.dart';
+import 'package:flutter_frontend/widgets/animated_icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/gestace_title.dart';
 import 'package:flutter_frontend/widgets/sidebar/branch_browser.dart';
 import 'package:flutter_frontend/widgets/sidebar/greetings.dart';
@@ -24,18 +28,16 @@ class SidebarMenu extends ConsumerStatefulWidget {
 }
 
 class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderStateMixin {
-  late final AnimationController menuAnimationController;
+  
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    menuAnimationController = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
-    menuAnimationController.dispose();
     super.dispose();
   }
 
@@ -49,92 +51,91 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
     final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
     final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
     final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
-    const SizedBox spacing  = SizedBox(height: 15);
+    const SizedBox spacing  = SizedBox(height: 15,width: 15,);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    final dpi = MediaQuery.of(context).devicePixelRatio;
 
     return Scaffold(
       backgroundColor: palette.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            VisibilityObserver(
-              child: Opacity(opacity: 0.08, child: StripesBackground(
-                color: Colors.black,
-                speed: 4.0,
-                spacing: 34,
-                stripeWidth: 0.5,
-              ))),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              top:45,
-              left:45,
-              child:Hero(tag:'gestace_title',child: Material(
-                type: MaterialType.transparency,
-                child: Transform.scale(
-                  scale:1.3,
-                  alignment: Alignment.topLeft,
-                  child: GestaceTitle())))),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              bottom:45,
-              left:45,
-              width: width/2.2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                   Hero(
-                    tag: 'menu_icon',
-                    child: HoverIcon(
-                      icon: Opacity( 
-                        opacity: 0.5,
-                        child: Lottie.asset(
-                          'assets/anims/menu_to_chevron_down.json',
-                          height: 60,
-                          width: 60,
-                          fit: BoxFit.contain,
-                          repeat: false,
-                          controller: menuAnimationController,
-                          onLoaded: (composition) {
-                            menuAnimationController
-                              ..duration = composition.duration
-                              ..forward();
-                          },
-                        ),
-                      ),
-                      label: 'Menu',
-                      elevate: false,
-                      onTap: () {
-                        menuAnimationController.stop();
-                        menuAnimationController.reverse();
-                        context.push('/dashboard');
-                      },
-                    ),
-                  ),
-                  ModuleCards(
-                    colors: [
-                      palette.tertiary,
-                      palette.secondary,
-                      palette.primary,
-                    ],
-                    spacing: 14,
-                  ),
-                  spacing*6,
-                  Row(
-                    children: [
-                      GreetingWidget(name: user?.fullName ?? user?.email ?? 'User',),
-                    ],
-                  ),
-                ],
-              )
-              ),
+      body: AdaptiveLayout(
+        child: SafeArea(
+          child: Stack(
+            children: [
+              VisibilityObserver(
+                child: Opacity(opacity: 0.08, child: StripesBackground(
+                  color: Colors.black,
+                  speed: 4.0,
+                  spacing: 90,
+                  stripeWidth: 0.5,
+                ))),
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 top:45,
-                right:45,
-                width: width/2.4,
-                child: BranchBrowser())
-          ],
+                left:layoutIsPortrait ?30:45,
+                child:Hero(tag:'gestace_title',child: Material(
+                  type: MaterialType.transparency,
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 300),
+                    scale: layoutIsPortrait ? 1.2 : 1.3,
+                    alignment: Alignment.topLeft,
+                    child: GestaceTitle())))),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                top: layoutIsPortrait ?85:null,
+                bottom:layoutIsPortrait ?null:45,
+                left:layoutIsPortrait ?null:45,
+                right:layoutIsPortrait ?20:null,
+                width:layoutIsPortrait ? width: width/2.2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                     Hero(
+                      tag: 'menu_icon',
+                      child: HoverIcon(
+                        icon: Opacity( 
+                          opacity: 0.5,
+                          child: MenuIcon(page: AppPage.sidebar_menu)
+                        ),
+                        label: 'Menu',
+                        elevate: false,
+                        onTap: () {
+                          context.go('/dashboard');
+                        },
+                      ),
+                    ),
+                    ModuleCards(
+                      colors: [
+                        palette.tertiary,
+                        palette.secondary,
+                        palette.primary,
+                      ],
+                      spacing:layoutIsPortrait? 10: 14,
+                      width:layoutIsPortrait? 120: 150,
+                      height:layoutIsPortrait?150: 200,
+                    ),
+                    spacing*(layoutIsPortrait? 0.5:6),
+                    Row(
+                      children: [
+                        if(layoutIsPortrait )spacing+5+30,
+                        AnimatedScale(
+                          duration: const Duration(milliseconds: 300),
+                          scale: layoutIsPortrait ? 0.8 : 1,
+                          alignment: Alignment.topLeft,
+                          child: GreetingWidget(name: user?.fullName ?? user?.email ?? 'User',)),
+                      ],
+                    ),
+                  ],
+                )
+                ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  top:layoutIsPortrait ?380:45,
+                  right:layoutIsPortrait ?15:45,
+                  width:layoutIsPortrait ? width-30: width/2.4,
+                  child: BranchBrowser())
+            ],
+          ),
         ),
       ),
     );

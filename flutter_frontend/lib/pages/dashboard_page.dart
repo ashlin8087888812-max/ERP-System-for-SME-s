@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
+import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
+import 'package:flutter_frontend/widgets/animated_icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
 import 'package:flutter_frontend/widgets/gestace_title.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
@@ -19,18 +21,14 @@ class DashboardPage extends ConsumerStatefulWidget {
 
 class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProviderStateMixin{
 
-  late final AnimationController menuAnimationController;
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    menuAnimationController = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
-    menuAnimationController.dispose();
     super.dispose();
   }
 
@@ -88,24 +86,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
                   Hero(
                     tag: 'menu_icon',
                     child: HoverIcon(
-                      icon: Lottie.asset(
-                        'assets/anims/menu_to_chevron_down.json',
-                        height: 30,
-                        width: 30,
-                        fit: BoxFit.contain,
-                        repeat: false,
-                        controller: menuAnimationController,
-                        onLoaded: (composition) {
-                          menuAnimationController
-                            ..duration = composition.duration
-                            ..reverse();
-                        },
-                      ),
+                      icon: MenuIcon(page: AppPage.dashboard),
                       label: 'Menu',
                       elevate: false,
                       onTap: () {
-                        menuAnimationController.stop();
-                        menuAnimationController.forward();
                         context.go('/menu');
                       },
                     ),
