@@ -22,7 +22,7 @@ class GestaceTitle extends StatelessWidget {
             style: TextStyle(
               fontFamily: "Lexend",
               fontSize: fontSize,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               color: color,
               
             ),
@@ -33,7 +33,7 @@ class GestaceTitle extends StatelessWidget {
             style: TextStyle(
               fontFamily: "Lexend",
               fontSize: fontSize,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               color: color,
               letterSpacing: -6,
             ),

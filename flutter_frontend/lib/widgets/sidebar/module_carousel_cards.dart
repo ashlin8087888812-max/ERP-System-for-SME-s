@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class ModuleCards extends StatelessWidget {
+class ModuleCarouselCards extends StatelessWidget {
   final double width;
   final double height;
   final List<Color> colors;     // bottom → top order
   final double spacing;         // horizontal or vertical offset
 
-  const ModuleCards({
+  const ModuleCarouselCards({
     super.key,
     this.width = 150,
     this.height = 200,
@@ -60,7 +60,7 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular( isTop
-            ?22:13),
+            ?20:13),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),

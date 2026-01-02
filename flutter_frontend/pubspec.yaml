@@ -54,6 +54,7 @@ dependencies:
   smooth_scroll_multiplatform: ^1.0.8
   flutter_svg: ^2.2.3
   lottie: ^3.3.2
+  vector_graphics: ^1.1.19
 
 dev_dependencies:
   flutter_test:

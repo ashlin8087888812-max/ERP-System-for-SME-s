@@ -3,7 +3,7 @@ import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
-import 'package:flutter_frontend/widgets/animated_icons/menu_icon.dart';
+import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
 import 'package:flutter_frontend/widgets/gestace_title.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';

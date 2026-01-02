@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/models/branch_model.dart';
 import 'package:flutter_frontend/utils/palette.dart';
+import 'package:flutter_frontend/widgets/decorated_icon.dart';
+import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
+import 'package:flutter_frontend/widgets/sidebar/branch_card.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 class BranchBrowser extends StatefulWidget {
@@ -13,8 +19,8 @@ class _BranchBrowserState extends State<BranchBrowser> {
   String _selectedFilter = 'All';
   String _searchQuery = '';
 
-  final List<ModuleItem> _modules = [
-    ModuleItem(
+  final List<Branch> _modules = [
+    Branch(
       name: 'contacts',
       category: 'Sales',
       icon: tabler.User(),
@@ -26,7 +32,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
       hasImage: true,
       imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400',
     ),
-    ModuleItem(
+    Branch(
       name: 'threads',
       category: 'All',
       icon: tabler.Menu2(),
@@ -38,7 +44,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
       hasImage: true,
       imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',
     ),
-    ModuleItem(
+    Branch(
       name: 'settings',
       category: 'All',
       icon: tabler.Settings(),
@@ -49,7 +55,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
       ),
       hasImage: false,
     ),
-    ModuleItem(
+    Branch(
       name: 'profiles',
       category: 'Accounting',
       icon: tabler.UserUp(),
@@ -62,7 +68,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
     ),
   ];
 
-  List<ModuleItem> get _filteredModules {
+  List<Branch> get _filteredModules {
     return _modules.where((module) {
       final matchesSearch = module.name.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesFilter = _selectedFilter == 'All' || module.category == _selectedFilter;
@@ -122,7 +128,6 @@ class _BranchBrowserState extends State<BranchBrowser> {
         ),
         
         const SizedBox(height: 20),
-        
         // Module Grid
         GridView.count(
           shrinkWrap: true,
@@ -131,7 +136,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
           crossAxisSpacing: 14,
           mainAxisSpacing: 14,
           childAspectRatio: 1.05,
-          children: _filteredModules.map((module) => _buildModuleCard(module)).toList(),
+          children: _filteredModules.map((module) => BranchCardA(branch: module,)).toList(),
         ),
       ],
     );
@@ -166,110 +171,6 @@ class _BranchBrowserState extends State<BranchBrowser> {
       ),
     );
   }
-
-  Widget _buildModuleCard(ModuleItem module) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: module.gradient,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Background image if available
-          if (module.hasImage)
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  module.imageUrl!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const SizedBox(),
-                ),
-              ),
-            ),
-          
-          // Gradient overlay for image cards
-          if (module.hasImage)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.2),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          
-          // Module name
-          Positioned(
-            top: 20,
-            left: 20,
-            child: Text(
-              module.name,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w400,
-                color: Colors.black.withOpacity(0.5),
-                fontFamily: 'Raster',
-                height: 1.2,
-              ),
-            ),
-          ),
-          
-          // Icon badge
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade800,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: module.icon,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class ModuleItem {
-  final String name;
-  final String category;
-  final Widget icon;
-  final Gradient gradient;
-  final bool hasImage;
-  final String? imageUrl;
 
-  ModuleItem({
-    required this.name,
-    required this.category,
-    required this.icon,
-    required this.gradient,
-    this.hasImage = false,
-    this.imageUrl,
-  });
-}

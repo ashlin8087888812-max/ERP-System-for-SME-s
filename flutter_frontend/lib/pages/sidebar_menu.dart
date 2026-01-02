@@ -7,12 +7,12 @@ import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/utils/stripes_painter.dart';
 import 'package:flutter_frontend/utils/visibility_observer.dart';
-import 'package:flutter_frontend/widgets/animated_icons/menu_icon.dart';
+import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/gestace_title.dart';
 import 'package:flutter_frontend/widgets/sidebar/branch_browser.dart';
 import 'package:flutter_frontend/widgets/sidebar/greetings.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
-import 'package:flutter_frontend/widgets/sidebar/module_cards.dart';
+import 'package:flutter_frontend/widgets/sidebar/module_carousel_cards.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -104,15 +104,15 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
                         },
                       ),
                     ),
-                    ModuleCards(
+                    ModuleCarouselCards(
                       colors: [
                         palette.tertiary,
                         palette.secondary,
                         palette.primary,
                       ],
-                      spacing:layoutIsPortrait? 10: 14,
+                      spacing:layoutIsPortrait? 12: 14,
                       width:layoutIsPortrait? 120: 150,
-                      height:layoutIsPortrait?150: 200,
+                      height:layoutIsPortrait?160: 200,
                     ),
                     spacing*(layoutIsPortrait? 0.5:6),
                     Row(

@@ -119,6 +119,9 @@ ColorPalette palette = ColorPalette(
   extras: [
     Color(0xFFd9d9d9),
     Color(0xFF3d3d3d),
+    Color(0xFFABABAB),
+    Color(0xFFFAFAFA),
+    
   ]
 );
 
