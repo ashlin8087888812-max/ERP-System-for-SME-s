@@ -7,8 +7,12 @@ import 'package:flutter_svg/svg.dart';
 class DecoratedIcon extends ConsumerStatefulWidget {
   final Function(String color, String strokeWidth, String strokeColor) iconSvg;
   final Function(String color, String strokeWidth, String strokeColor) overlaySvg;
+  final double iconSize;
+  final double overlaySize;
   final Offset offset;
-  const DecoratedIcon({super.key, required this.iconSvg, required this.offset, required this.overlaySvg});
+  final bool showOverlay;
+  final bool showIcon;
+  const DecoratedIcon({super.key, required this.iconSvg, required this.offset, required this.overlaySvg, required this.iconSize, required this.overlaySize, this.showOverlay = true, this.showIcon = true});
 
   @override
   ConsumerState<DecoratedIcon> createState() => _DecoratedIconState();
@@ -16,48 +20,90 @@ class DecoratedIcon extends ConsumerStatefulWidget {
 
 class _DecoratedIconState extends ConsumerState<DecoratedIcon> {
   @override
+  void didUpdateWidget(covariant DecoratedIcon oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.iconSize != widget.iconSize || oldWidget.overlaySize != widget.overlaySize) {
+      setState(() {});
+    }
+  }
+  @override
   Widget build(BuildContext context) {
+    final double iconSize = widget.iconSize; 
+    final double overlaySize = widget.overlaySize;
     return Stack(
       children: [
         SizedBox(
-          width: 90,
+          width: iconSize+22,
         ),
+        if(!widget.showOverlay) Positioned(
+          left: 22,
+          top: 6,
+          child: Container(
+            decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: palette.extras[1], 
+          ),
+            width: iconSize-5, 
+            height: iconSize-10,)
+          ),
+        
         Positioned(
           left: 20,
           child: SvgPicture.string(
-            message_1(palette.extras[2].hexRGB, "0.0", palette.extras[0].hexRGB),
-            width: 65,
+            widget.iconSvg(palette.extras[2].hexRGB, "0.0", palette.extras[0].hexRGB),
+            width: iconSize,
             allowDrawingOutsideViewBox: true,
           ),
         ),
-        Positioned(
-          right: widget.offset.dx+2,
+        if(widget.showOverlay) Positioned(
+          right: widget.offset.dx-8,
           top: widget.offset.dy,
-          child: SvgPicture.string(widget.overlaySvg(palette.extras[1].hexRGB, "0.5", palette.extras[1].hexRGB),
-            width: 40,
+          child: SvgPicture.string(widget.overlaySvg(palette.extras[1].hexRGB, "0.4", palette.extras[1].hexRGB),
+            width: overlaySize,
           ),
         ),
+        if(!widget.showOverlay) Positioned(
+          left: 2,
+          top: 5,
+          child: Container(
+            decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: palette.white,
+            boxShadow: [
+              
+              // BoxShadow(
+              //   color: palette.extras[1].withOpacity(0.2),
+              //   blurRadius: 2,
+              //   spreadRadius: 8,
+              //   offset: Offset(2,0),
+              // ),
+            ],
+          ),
+            width: iconSize-5, 
+            height: iconSize-10,)
+          ),
         DecoratedBox(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(
-                color: palette.extras[1].withOpacity(0.3),
-                blurRadius: 5,
-                spreadRadius: -8,
-                offset: Offset(0,0),
-              ),
+              // if(widget.showOverlay)
+              // BoxShadow(
+              //   color: palette.extras[1].withOpacity(0.3),
+              //   blurRadius: 5,
+              //   spreadRadius: -8,
+              //   offset: Offset(0,0),
+              // ),
             ],
           ),
           child: SvgPicture.string(widget.iconSvg(palette.extras[1].hexRGB, "0.0", palette.extras[0].hexRGB),
-            width: 65,
+            width: iconSize,
           ),
         ),
-        Positioned(
+        if(widget.showOverlay) Positioned(
           left: widget.offset.dx,
           top: widget.offset.dy,
-          child: SvgPicture.string(widget.overlaySvg(palette.white.hexRGB, "0.5", palette.white.hexRGB),
-            width: 40,
+          child: SvgPicture.string(widget.overlaySvg(palette.white.hexRGB, "0.4", palette.white.hexRGB),
+            width: overlaySize,
           ),
         ),
       ],

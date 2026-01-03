@@ -1,71 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/branch_model.dart';
+import 'package:flutter_frontend/utils/branches.dart';
+import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/decorated_icon.dart';
 import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
 import 'package:flutter_frontend/widgets/sidebar/branch_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
-class BranchBrowser extends StatefulWidget {
+class BranchBrowser extends ConsumerStatefulWidget {
   const BranchBrowser({super.key});
 
   @override
-  State<BranchBrowser> createState() => _BranchBrowserState();
+  ConsumerState<BranchBrowser> createState() => _BranchBrowserState();
 }
 
-class _BranchBrowserState extends State<BranchBrowser> {
+class _BranchBrowserState extends ConsumerState<BranchBrowser> {
   String _selectedFilter = 'All';
   String _searchQuery = '';
 
-  final List<Branch> _modules = [
-    Branch(
-      name: 'contacts',
-      category: 'Sales',
-      icon: tabler.User(),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFFB8E6F5), Color(0xFF7EC8E3)],
-      ),
-      hasImage: true,
-      imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400',
-    ),
-    Branch(
-      name: 'threads',
-      category: 'All',
-      icon: tabler.Menu2(),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFFE8D5C4), Color(0xFFD4BFA8)],
-      ),
-      hasImage: true,
-      imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',
-    ),
-    Branch(
-      name: 'settings',
-      category: 'All',
-      icon: tabler.Settings(),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF5A5A5A), Color(0xFF3C3C3C)],
-      ),
-      hasImage: false,
-    ),
-    Branch(
-      name: 'profiles',
-      category: 'Accounting',
-      icon: tabler.UserUp(),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFFD4A5E8), Color(0xFFA87BC7)],
-      ),
-      hasImage: false,
-    ),
+  List<Branch> get _modules => [
+    contacts,
+    threads,
+    settings,
+    profiles,
+    
   ];
 
   List<Branch> get _filteredModules {
@@ -78,8 +41,15 @@ class _BranchBrowserState extends State<BranchBrowser> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final layoutTier = ref.watch(layoutTierProvider);
+    final layoutOrientation = ref.watch(layoutOrientationProvider);
+    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
+    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
+    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
         // Search Bar
         Container(
@@ -98,7 +68,7 @@ class _BranchBrowserState extends State<BranchBrowser> {
               hintStyle: TextStyle(
                 color: palette.black,
                 fontSize: 18,
-                fontWeight: FontWeight.w100,
+                fontWeight: FontWeight.w300,
                 fontFamily: 'Lexend',
                 fontVariations: [
                   FontVariation('wght', 300),
@@ -127,16 +97,65 @@ class _BranchBrowserState extends State<BranchBrowser> {
           ],
         ),
         
-        const SizedBox(height: 20),
         // Module Grid
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 14,
-          mainAxisSpacing: 14,
-          childAspectRatio: 1.05,
-          children: _filteredModules.map((module) => BranchCardA(branch: module,)).toList(),
+        Expanded(
+          child: ScrollConfiguration(
+            behavior: ScrollBehavior().copyWith(scrollbars: false),
+            child: DynMouseScroll(
+              scrollSpeed: 1,
+              builder: (context, controller, physics) {
+                return ShaderMask(
+                  blendMode: BlendMode.dstIn,
+                  shaderCallback: (rect) {
+                    return const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black,
+                        Colors.black,
+                      ],
+                      stops: [0.0, 0.02, 1.0],
+                    ).createShader(rect);
+                  },
+                  child: CustomScrollView(
+                    controller: controller,
+                    physics: physics,
+                    slivers: [
+                      // TOP SCROLLING SPACER (replaces your SizedBox)
+                      const SliverToBoxAdapter(
+                        child: SizedBox(height: 24),
+                      ),
+
+                      SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return BranchCard(
+                              isA: index.isEven,
+                              branch: _filteredModules[index],
+                            );
+                          },
+                          childCount: _filteredModules.length,
+                        ),
+                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 300,
+                          mainAxisExtent: 200,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 260 / 226,
+                        ),
+                      ),
+
+                      // BOTTOM SCROLLING SPACER
+                      const SliverToBoxAdapter(
+                        child: SizedBox(height: 24),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ],
     );

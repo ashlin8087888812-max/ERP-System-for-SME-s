@@ -24,7 +24,7 @@ class GestaceTitle extends StatelessWidget {
               fontSize: fontSize,
               fontWeight: FontWeight.w500,
               color: color,
-              
+              letterSpacing: -3,
             ),
           ),
           /// "t"
@@ -48,13 +48,14 @@ class GestaceTitle extends StatelessWidget {
               children: [
                 // tagline
                 Text(
-                  "For All Time. Always.",
+                  "For All Time. Always. ",
                   style: TextStyle(
                     fontFamily: "Lexend",
                     fontSize: 9.5, 
-                    fontWeight: FontWeight.w400,
-                    color: color.withOpacity(0.85),
-                    height: 0.9
+                    fontWeight: FontWeight.w500,
+                    color: color.withOpacity(0.5),
+                    height: 0.9,
+                    letterSpacing: -0.1,
                   ),
                 ),
 

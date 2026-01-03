@@ -133,6 +133,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
                   top:layoutIsPortrait ?380:45,
                   right:layoutIsPortrait ?15:45,
                   width:layoutIsPortrait ? width-30: width/2.4,
+                  height: layoutIsPortrait ? height-380: height-45,
                   child: BranchBrowser())
             ],
           ),
