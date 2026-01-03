@@ -4,6 +4,8 @@ import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/decorated_icon.dart';
 import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 class BranchCard extends StatefulWidget {
   final bool isA;
@@ -20,6 +22,10 @@ class BranchCard extends StatefulWidget {
 }
 
 class _BranchCardState extends State<BranchCard> {
+
+  bool _isHovered = false;
+
+
   @override
   void didUpdateWidget(covariant BranchCard oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -30,10 +36,18 @@ class _BranchCardState extends State<BranchCard> {
   @override
   Widget build(BuildContext context) {
 
-    if (widget.isA) {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (event) => setState(() => _isHovered = true),
+      onExit: (event) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: () {
+          context.go(widget.branch.url);
+        },
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (widget.isA) {
+              return Container(
           decoration: BoxDecoration(
             color: widget.branch.color,
             borderRadius: BorderRadius.circular(15),
@@ -58,8 +72,9 @@ class _BranchCardState extends State<BranchCard> {
                   ),
                 ),
               
-              Positioned(
-                bottom: 0,
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                bottom: _isHovered ? constraints.maxHeight- (constraints.maxHeight/1.42): 0,
                 width: constraints.maxWidth,
                 child: InnerShadow(
                   shadows: [
@@ -97,9 +112,10 @@ class _BranchCardState extends State<BranchCard> {
                           children: [
                             SizedBox(width: 20,),
                             SizedBox(
-                              width: constraints.maxWidth/2,
+                              width: constraints.maxWidth-35,
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
                                 child: Text(
                                   widget.branch.name,
                                   style: TextStyle(
@@ -116,20 +132,30 @@ class _BranchCardState extends State<BranchCard> {
                           ],
                         ),
                         Expanded(child: SizedBox(height: 5,)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            DecoratedIcon(
-                              iconSvg: widget.branch.iconSvg,
-                              overlaySvg: widget.branch.overlaySvg,
-                              iconSize: (widget.branch.iconSize-(constraints.maxHeight/55)).clamp(0, widget.branch.iconSize),
-                              overlaySize: widget.branch.overlaySize,
-                              offset: widget.branch.offset,
-                              showOverlay: widget.branch.showOverlay,
-                              showIcon: widget.branch.showIcon,
-                            ),
-                            SizedBox(width: 15,),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AnimatedSlide(
+                                offset: _isHovered ? Offset(-0.1, 0.1) : Offset(-2, 0),
+                                duration: const Duration(milliseconds: 300),
+                                child: tabler.ChevronsUpRight(
+                                  color: palette.extras[1].withOpacity(0.2),
+                                  height: (widget.branch.iconSize-(constraints.maxHeight/55)).clamp(0, widget.branch.iconSize),),
+                              ),
+                              DecoratedIcon(
+                                iconSvg: widget.branch.iconSvg,
+                                overlaySvg: widget.branch.overlaySvg,
+                                iconSize: (widget.branch.iconSize-(constraints.maxHeight/55)).clamp(0, widget.branch.iconSize),
+                                overlaySize: widget.branch.overlaySize,
+                                offset: widget.branch.offset,
+                                showOverlay: widget.branch.showOverlay,
+                                showIcon: widget.branch.showIcon,
+                              ),
+                              // SizedBox(width: 15,),
+                            ],
+                          ),
                         ),
                         SizedBox(height: 15,),
                       ],
@@ -142,124 +168,142 @@ class _BranchCardState extends State<BranchCard> {
             ],
           ),
               );
-        }
-      );
-    } else {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          return Stack(
-            children: [
-              Container(
-                margin: EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: widget.branch.color,
-                  borderRadius: BorderRadius.circular(15).copyWith(
-                    topLeft: Radius.circular(35),
-                    topRight: Radius.circular(35),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),),
-              // Background image if available
-              Positioned.fill(
-                  child: Container(
-                    margin: EdgeInsets.all(12),
+            } else {
+              return Stack(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: EdgeInsets.all(7),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(35),
-                      color: Colors.black.withOpacity(0.1),
-                    ),
-                  ),
-                ),
-              
-              Positioned(
-                child: InnerShadow(
-                  shadows: [
-                    Shadow(
-                      color: palette.black.withOpacity(0.08),
-                      offset: const Offset(-3, -3),
-                      blurRadius: 0,
-                    ),
-                    Shadow(
-                      color: palette.white.withOpacity(0.3),
-                      offset: const Offset(3, 3),
-                      blurRadius: 0,
-                    ),
-                    ],
-                  child: Container(
-                    height: constraints.maxHeight/1.6,
-                    margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: palette.extras[3],
-                      borderRadius: BorderRadius.circular(35),
+                      color: widget.branch.color,
+                      borderRadius: BorderRadius.circular(15).copyWith(
+                        topLeft: _isHovered ? Radius.circular(15) : Radius.circular(35),
+                        topRight: _isHovered ? Radius.circular(15) : Radius.circular(35),
+                        bottomLeft: _isHovered ? Radius.circular(35) : Radius.circular(15),
+                        bottomRight: _isHovered ? Radius.circular(35) : Radius.circular(15),
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 3,
-                          spreadRadius: 3,
-                          offset: const Offset(0, 0),
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
+                    ),),
+                  // Background image if available
+                  Positioned.fill(
+                      child: Container(
+                        margin: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(35),
+                          color: Colors.black.withOpacity(0.1),
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 5,),
-                        Row(
+                  
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    top: _isHovered ? constraints.maxHeight- (constraints.maxHeight/1.5): 0,
+                    child: InnerShadow(
+                      shadows: [
+                        Shadow(
+                          color: palette.black.withOpacity(0.08),
+                          offset: const Offset(-3, -3),
+                          blurRadius: 0,
+                        ),
+                        Shadow(
+                          color: palette.white.withOpacity(0.3),
+                          offset: const Offset(3, 3),
+                          blurRadius: 0,
+                        ),
+                        ],
+                      child: Container(
+                        height: constraints.maxHeight/1.6,
+                        margin: EdgeInsets.all(5),
+                        width: constraints.maxWidth-10,
+                        decoration: BoxDecoration(
+                          color: palette.extras[3],
+                          borderRadius: BorderRadius.circular(35),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 3,
+                              spreadRadius: 3,
+                              offset: const Offset(0, 0),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(width: 20,),
-                            SizedBox(
-                              width: constraints.maxWidth/2,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  widget.branch.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w400,
-                                    color: palette.black.withOpacity(0.6),
-                                    letterSpacing: -3,
-                                    fontFamily: 'Lexend',
-                                    height: 1.2,
+                            SizedBox(height: 5,),
+                            Row(
+                              children: [
+                                SizedBox(width: 20,),
+                                SizedBox(
+                                  width: constraints.maxWidth-35,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      widget.branch.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w400,
+                                        color: palette.black.withOpacity(0.6),
+                                        letterSpacing: -3,
+                                        fontFamily: 'Lexend',
+                                        height: 1.2,
+                                      ),
+                                    ),
                                   ),
                                 ),
+                              ],
+                            ),
+                            Expanded(child: SizedBox(height: 5,)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  AnimatedSlide(
+                                    offset: _isHovered ? Offset(-0.1, 0.2) : Offset(-2, 0),
+                                    duration: const Duration(milliseconds: 300),
+                                    child: tabler.ChevronsUpRight(
+                                      color: palette.extras[1].withOpacity(0.2),
+                                      height: 50,
+                                  ),
+                                  ),
+                                  DecoratedIcon(
+                                    iconSvg: widget.branch.iconSvg,
+                                    overlaySvg: widget.branch.overlaySvg,
+                                    iconSize: (widget.branch.iconSize-(constraints.maxHeight/55)).clamp(0, widget.branch.iconSize),
+                                    overlaySize: (widget.branch.overlaySize-(constraints.maxHeight/55)).clamp(0, widget.branch.overlaySize),
+                                    offset: widget.branch.offset,
+                                    showOverlay: widget.branch.showOverlay,
+                                    showIcon: widget.branch.showIcon,
+                                  ),
+                                  // SizedBox(width: 15,),
+                                ],
                               ),
                             ),
+                            SizedBox(height: 15,),
                           ],
                         ),
-                        Expanded(child: SizedBox(height: 5,)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            DecoratedIcon(
-                              iconSvg: widget.branch.iconSvg,
-                              overlaySvg: widget.branch.overlaySvg,
-                              iconSize: (widget.branch.iconSize-(constraints.maxHeight/55)).clamp(0, widget.branch.iconSize),
-                              overlaySize: (widget.branch.overlaySize-(constraints.maxHeight/55)).clamp(0, widget.branch.overlaySize),
-                              offset: widget.branch.offset,
-                              showOverlay: widget.branch.showOverlay,
-                              showIcon: widget.branch.showIcon,
-                            ),
-                            SizedBox(width: 15,),
-                          ],
-                        ),
-                        SizedBox(height: 15,),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              
-              
-            ],
-          );
-        }
-      );
-    }
+                  
+                  
+                ],
+              );
+            }
+          },
+        ),
+      ),
+    );
+
+    
   }
 }

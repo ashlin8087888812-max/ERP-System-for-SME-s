@@ -15,6 +15,7 @@ class Branch {
   final bool showOverlay;
   final bool showIcon;
   final Color color;
+  final String url;
 
   Branch({
     required this.name,
@@ -31,5 +32,6 @@ class Branch {
     this.showOverlay = true,
     this.showIcon = true,
     required this.color,
+    required this.url,
   });
 }

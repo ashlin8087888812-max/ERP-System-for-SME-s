@@ -51,11 +51,11 @@ class GestaceTitle extends StatelessWidget {
                   "For All Time. Always. ",
                   style: TextStyle(
                     fontFamily: "Lexend",
-                    fontSize: 9.5, 
+                    fontSize: 9.8, 
                     fontWeight: FontWeight.w500,
                     color: color.withOpacity(0.5),
-                    height: 0.9,
-                    letterSpacing: -0.1,
+                    height: 0.3,
+                    letterSpacing: 0,
                   ),
                 ),
 
@@ -63,7 +63,7 @@ class GestaceTitle extends StatelessWidget {
                   "ace",
                   style: TextStyle(
                     fontFamily: "Raster",
-                    fontSize: fontSize,
+                    fontSize: fontSize+2,
                     fontWeight: FontWeight.w400,
                     color: color,
                      height: 0.6

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/branch_model.dart';
 import 'package:flutter_frontend/utils/branches.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
+import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/decorated_icon.dart';
 import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
@@ -115,7 +116,7 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
                         Colors.black,
                         Colors.black,
                       ],
-                      stops: [0.0, 0.02, 1.0],
+                      stops: [0.0, 0.03, 1.0],
                     ).createShader(rect);
                   },
                   child: CustomScrollView(
@@ -123,8 +124,8 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
                     physics: physics,
                     slivers: [
                       // TOP SCROLLING SPACER (replaces your SizedBox)
-                      const SliverToBoxAdapter(
-                        child: SizedBox(height: 24),
+                      SliverToBoxAdapter(
+                        child: SizedBox(height: mapUniformScale(12, 30, width, height)),
                       ),
 
                       SliverGrid(
@@ -163,28 +164,34 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
 
   Widget _buildFilterChip(String label) {
     final isSelected = _selectedFilter == label;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedFilter = label),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-        decoration: BoxDecoration(
-          color: isSelected ? palette.extras[1] : palette.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? Colors.black : palette.black,
-            width: 0.8,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
-            fontSize: 16,
-            letterSpacing: -0.2,
-            fontFamily: 'Lexend',
-            fontVariations: [
-              FontVariation('wght', 300),
-            ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Material(
+        color: isSelected ? palette.extras[1] : palette.white,
+        child: InkWell(
+          onTap: () => setState(() => _selectedFilter = label),
+          hoverColor: palette.extras[isSelected ?1:0],
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isSelected ? Colors.black : palette.black,
+                width: 0.8,
+              ),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+                fontSize: 16,
+                letterSpacing: -0.2,
+                fontFamily: 'Lexend',
+                fontVariations: [
+                  FontVariation('wght', 300),
+                ],
+              ),
+            ),
           ),
         ),
       ),

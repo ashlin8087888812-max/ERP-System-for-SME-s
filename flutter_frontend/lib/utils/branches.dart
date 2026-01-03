@@ -7,6 +7,7 @@ import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 Branch get contacts => Branch(
   name: 'contacts',
+  url: '/contacts',
   category: 'Sales',
   icon: tabler.User(),
   gradient: const LinearGradient(
@@ -27,6 +28,7 @@ Branch get contacts => Branch(
 
 Branch get threads => Branch(
   name: 'threads',
+  url: '/threads',
   category: 'All',
   icon: tabler.Menu2(),
   color: const Color(0xFFFFFAD7),
@@ -46,6 +48,7 @@ Branch get threads => Branch(
 
 Branch get settings => Branch(
   name: 'settings',
+  url: '/settings',
   category: 'All',
   icon: tabler.Settings(),
   color: const Color(0xFFA8A8A8),
@@ -65,6 +68,7 @@ Branch get settings => Branch(
 
 Branch get profiles => Branch(
   name: 'profiles',
+  url: '/profiles',
   category: 'Accounting',
   icon: tabler.UserUp(),
   color: const Color(0xFFDED7FF),

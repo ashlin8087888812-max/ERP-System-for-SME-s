@@ -110,7 +110,7 @@ ColorPalette OGPalette = ColorPalette(
   tertiary: const Color(0xFF54442B), //brown
 );
 
-ColorPalette palette = ColorPalette(
+ColorPalette get palette => ColorPalette(
   primary:Color(0xFFD7F0FF),  
   secondary:Color(0xFFFFEFD7),
   tertiary: Color(0xFFFFD7D8),
@@ -118,7 +118,7 @@ ColorPalette palette = ColorPalette(
   white: Color(0xFFFFFFFF),
   extras: [
     Color(0xFFd9d9d9),
-    Color(0xFF3d3d3d),
+    Color(0xFF484848),
     Color(0xFFABABAB),
     Color(0xFFFAFAFA),
     

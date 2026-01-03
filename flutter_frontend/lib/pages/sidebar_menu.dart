@@ -130,7 +130,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
                 ),
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
-                  top:layoutIsPortrait ?380:45,
+                  top:layoutIsPortrait ?390:45,
                   right:layoutIsPortrait ?15:45,
                   width:layoutIsPortrait ? width-30: width/2.4,
                   height: layoutIsPortrait ? height-380: height-45,
