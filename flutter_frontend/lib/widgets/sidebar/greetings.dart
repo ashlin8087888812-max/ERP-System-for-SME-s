@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class GreetingWidget extends StatelessWidget {
   final String name;
+  final double size;
 
   const GreetingWidget({
     super.key,
     required this.name,
+    required this.size,
   });
 
   @override
@@ -16,8 +18,8 @@ class GreetingWidget extends StatelessWidget {
       children: [
         Text(
           "Greetings,",
-          style: const TextStyle(
-            fontSize: 20,
+          style: TextStyle(
+            fontSize: size-12,
             fontWeight: FontWeight.w400,
             color: Colors.black54,
             fontFamily: "Screen",
@@ -27,8 +29,8 @@ class GreetingWidget extends StatelessWidget {
 
         Text(
           name,
-          style: const TextStyle(
-            fontSize: 32,
+          style: TextStyle(
+            fontSize: size,
             fontWeight: FontWeight.w400,
             fontFamily: "Raster",        // same pixel font as screenshot
             height: 1.1,
@@ -40,7 +42,7 @@ class GreetingWidget extends StatelessWidget {
         Text(
           "which branch would you like to check out?",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: size-12,
             fontWeight: FontWeight.w400,
             color: Colors.black.withOpacity(0.65),
             letterSpacing: -1,

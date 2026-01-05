@@ -32,15 +32,6 @@ class _MenuIconState extends ConsumerState<MenuIcon> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final layoutTier = ref.watch(layoutTierProvider);
-    final layoutOrientation = ref.watch(layoutOrientationProvider);
-    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
-    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
-    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
-    final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
-    const SizedBox spacing  = SizedBox(height: 15);
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
 
     
     switch(widget.page){
@@ -49,6 +40,10 @@ class _MenuIconState extends ConsumerState<MenuIcon> with TickerProviderStateMix
       case AppPage.sidebar_menu:
         return tabler.ChevronsDown(
           width: 50,height: 50,
+        );
+      case AppPage.dashboard_sidebar:
+        return tabler.ChevronsLeft(
+          width: 35,height: 35,
         );
       default:
         return kIsWeb? tabler.Menu3(): Lottie.asset(

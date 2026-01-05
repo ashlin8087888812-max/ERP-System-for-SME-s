@@ -35,7 +35,12 @@ class AppRouter {
         ),
         GoRoute(
           path: '/dashboard',
-          builder: (context, state) => const DashboardPage(),
+          builder: (context, state) {
+            final sidebar = state.uri.queryParameters['sidebar'];
+            final sidebarOpen = sidebar == 'open'; // anything else → false
+
+            return DashboardPage(sidebar: sidebarOpen);
+          },
         ),
         GoRoute(
           path: '/contacts',

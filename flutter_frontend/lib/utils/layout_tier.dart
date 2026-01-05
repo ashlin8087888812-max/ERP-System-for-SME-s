@@ -36,8 +36,8 @@ final layoutOrientationProvider =
 LayoutTier computeLayoutTier(Size size) {
   final shortest = size.shortestSide;
   if (shortest < 600) return LayoutTier.compact;
-  if (shortest < 700) return LayoutTier.mobile;
-  if (shortest < 900) return LayoutTier.tablet;
+  if (shortest < 900) return LayoutTier.mobile;
+  if (shortest < 1000) return LayoutTier.tablet;
   return LayoutTier.desktop;
 }
 

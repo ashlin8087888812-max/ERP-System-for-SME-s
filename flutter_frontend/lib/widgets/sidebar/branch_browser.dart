@@ -49,6 +49,7 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
     final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
     final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
     final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
+    
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -139,7 +140,7 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
                           childCount: _filteredModules.length,
                         ),
                         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 300,
+                          maxCrossAxisExtent: 337,
                           mainAxisExtent: 200,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,

@@ -112,7 +112,7 @@ class _BranchCardState extends State<BranchCard> {
                           children: [
                             SizedBox(width: 20,),
                             SizedBox(
-                              width: constraints.maxWidth-35,
+                              width: constraints.maxWidth-55,
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
@@ -129,6 +129,7 @@ class _BranchCardState extends State<BranchCard> {
                                 ),
                               ),
                             ),
+                            SizedBox(width: 20,),
                           ],
                         ),
                         Expanded(child: SizedBox(height: 5,)),
@@ -241,7 +242,7 @@ class _BranchCardState extends State<BranchCard> {
                               children: [
                                 SizedBox(width: 20,),
                                 SizedBox(
-                                  width: constraints.maxWidth-35,
+                                  width: constraints.maxWidth-45,
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerLeft,
@@ -259,6 +260,7 @@ class _BranchCardState extends State<BranchCard> {
                                     ),
                                   ),
                                 ),
+                                SizedBox(width: 10,),
                               ],
                             ),
                             Expanded(child: SizedBox(height: 5,)),

@@ -85,6 +85,19 @@ double mapUniformScale(
   return outMin + (outMax - outMin) * frozenProgress;
 }
 
+double mapWidthScale(
+  double outMin,
+  double outMax,
+  double sWidth, {
+  double baseWidth = 800,
+  double maxWidth = 2194,
+}) {
+  final progress =
+      ((sWidth - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
+
+  return outMin + (outMax - outMin) * progress;
+}
+
 
 /// Extension on num to provide a convenient map method.
 ///

@@ -54,7 +54,11 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
     const SizedBox spacing  = SizedBox(height: 15,width: 15,);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    final dpi = MediaQuery.of(context).devicePixelRatio;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (layoutIsDesktop) {
+      context.go('/dashboard?sidebar=open');
+    }
+  });
 
     return Scaffold(
       backgroundColor: palette.white,
@@ -86,7 +90,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
                 bottom:layoutIsPortrait ?null:45,
                 left:layoutIsPortrait ?null:45,
                 right:layoutIsPortrait ?20:null,
-                width:layoutIsPortrait ? width: width/2.2,
+                width:layoutIsPortrait ? width: width/2.25,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -116,13 +120,22 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
                     ),
                     spacing*(layoutIsPortrait? 0.5:6),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         if(layoutIsPortrait )spacing+5+30,
-                        AnimatedScale(
-                          duration: const Duration(milliseconds: 300),
-                          scale: layoutIsPortrait ? 0.8 : 1,
-                          alignment: Alignment.topLeft,
-                          child: GreetingWidget(name: user?.fullName ?? user?.email ?? 'User',)),
+                        Expanded(
+                          child: AnimatedScale(
+                            duration: const Duration(milliseconds: 300),
+                            scale: layoutIsPortrait ? 0.8 : 1,
+                            alignment: Alignment.topLeft,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: GreetingWidget(
+                                name: user?.fullName ?? user?.email ?? 'User',
+                                size: 32,
+                                ))),
+                        ),
                       ],
                     ),
                   ],
