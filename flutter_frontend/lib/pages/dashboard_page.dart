@@ -87,7 +87,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
                 direction: layoutIsPortrait? Axis.horizontal: Axis.vertical,
                 children: [
                   !sidebar?Hero(
-                    tag: 'menu_ico',
+                    tag: 'menu_icon',
                     child: HoverIcon(
                       icon: MenuIcon(page: AppPage.dashboard),
                       label: 'Menu',
@@ -106,7 +106,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
                   ): SizedBox(),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(top: layoutIsPortrait? 0:sidebar? 0:14,left: layoutIsPortrait? 14:0),
+                      padding: EdgeInsets.only(top: layoutIsPortrait? 0:sidebar? 0:10,left: layoutIsPortrait? 10:0),
                       child: Navbar(
                         size: navbarSize,
                         sidebar: sidebar,

@@ -74,7 +74,7 @@ class _BranchCardState extends State<BranchCard> {
               
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
-                bottom: _isHovered ? constraints.maxHeight- (constraints.maxHeight/1.42): 0,
+                bottom: _isHovered ? (constraints.maxHeight- (constraints.maxHeight/1.42)).clamp(5, constraints.maxHeight): 0,
                 width: constraints.maxWidth,
                 child: InnerShadow(
                   shadows: [
@@ -112,7 +112,7 @@ class _BranchCardState extends State<BranchCard> {
                           children: [
                             SizedBox(width: 20,),
                             SizedBox(
-                              width: constraints.maxWidth-55,
+                              width: (constraints.maxWidth-55).clamp(5, constraints.maxWidth),
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
@@ -204,7 +204,7 @@ class _BranchCardState extends State<BranchCard> {
                   
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 300),
-                    top: _isHovered ? constraints.maxHeight- (constraints.maxHeight/1.5): 0,
+                    top: _isHovered ? (constraints.maxHeight- (constraints.maxHeight/1.5)).clamp(5, constraints.maxHeight): 0,
                     child: InnerShadow(
                       shadows: [
                         Shadow(
@@ -218,10 +218,11 @@ class _BranchCardState extends State<BranchCard> {
                           blurRadius: 0,
                         ),
                         ],
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
                         height: constraints.maxHeight/1.6,
                         margin: EdgeInsets.all(5),
-                        width: constraints.maxWidth-10,
+                        width: (constraints.maxWidth-10).clamp(5, constraints.maxWidth),
                         decoration: BoxDecoration(
                           color: palette.extras[3],
                           borderRadius: BorderRadius.circular(35),
@@ -242,7 +243,7 @@ class _BranchCardState extends State<BranchCard> {
                               children: [
                                 SizedBox(width: 20,),
                                 SizedBox(
-                                  width: constraints.maxWidth-45,
+                                  width: (constraints.maxWidth-45).clamp(5, constraints.maxWidth),
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerLeft,

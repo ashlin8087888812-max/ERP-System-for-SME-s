@@ -50,9 +50,8 @@ class Navbar extends ConsumerWidget {
     Widget divider =  layoutIsPortrait?
     VerticalDivider(indent: 15,endIndent: 15,color: palette.black.withOpacity(0.2), thickness: 0.3,):
     Divider(indent: 15,endIndent: 15,color: palette.black.withOpacity(0.2), thickness: 0.8,);
-    
 
-    return DecoratedBox(
+    Widget navbar = DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(sidebar? 0:20))
             .copyWith(
@@ -165,6 +164,7 @@ class Navbar extends ConsumerWidget {
                   ],
                 ),
               ),
+              // Desktop mode Sidebar
               AnimatedOpacity(
                 opacity: sidebar? 1:0,
                 duration: const Duration(milliseconds: 300),
@@ -215,14 +215,14 @@ class Navbar extends ConsumerWidget {
                               ),
                             ),
                             spacing,
-                            Expanded(child: BranchBrowser()),
+                            sidebar? Expanded(child: BranchBrowser()): SizedBox(),
                           ],
                         )),
                       AnimatedPositioned(
                         duration: const Duration(milliseconds: 300),
                         top: 20,
                         right: 20,
-                        child: Hero(
+                        child: sidebar? Hero(
                           tag: 'menu_icon',
                           child: HoverIcon(
                             icon: Opacity( 
@@ -235,7 +235,7 @@ class Navbar extends ConsumerWidget {
                               context.go('/dashboard');
                             },
                           ),
-                        ),
+                        ) : SizedBox(),
                       ),
                       
                     ],
@@ -246,6 +246,12 @@ class Navbar extends ConsumerWidget {
           ),
         ),
       ),
+    );
+    
+
+    return sidebar? navbar: Hero(
+      tag: 'navbar',
+      child: navbar,
     );
   }
 }

@@ -36,7 +36,9 @@ class _MenuIconState extends ConsumerState<MenuIcon> with TickerProviderStateMix
     
     switch(widget.page){
       case AppPage.dashboard:
-        return tabler.Menu3();
+        return tabler.Menu3(
+          width: 30,height: 30,
+        );
       case AppPage.sidebar_menu:
         return tabler.ChevronsDown(
           width: 50,height: 50,
