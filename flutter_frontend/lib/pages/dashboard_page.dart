@@ -53,7 +53,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
     bool sidebar = widget.sidebar?? false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!layoutIsDesktop && sidebar) {
-        print('object');
         context.go('/menu');
       }
     });
