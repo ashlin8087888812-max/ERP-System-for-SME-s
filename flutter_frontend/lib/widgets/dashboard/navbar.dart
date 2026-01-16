@@ -116,6 +116,16 @@ class Navbar extends ConsumerWidget {
                               mainAxisAlignment:layoutIsMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 50),
+                                HoverIcon(
+                                  label: 'Dashboard',
+                                  icon: SvgPicture.asset(
+                                    'assets/icons/dashboard_2.svg',
+                                    color: palette.extras[1],
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  onTap: () => context.go('/dashboard'),
+                                ),
                             
                                 HoverIcon(
                                   label: 'Contacts',
