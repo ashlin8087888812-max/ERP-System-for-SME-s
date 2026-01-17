@@ -121,8 +121,6 @@ class Navbar extends ConsumerWidget {
                                   icon: SvgPicture.asset(
                                     'assets/icons/dashboard_2.svg',
                                     color: palette.extras[1],
-                                    width: 24,
-                                    height: 24,
                                   ),
                                   onTap: () => context.go('/dashboard'),
                                 ),
