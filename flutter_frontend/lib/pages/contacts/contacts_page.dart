@@ -5,6 +5,8 @@ import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
+import 'package:flutter_frontend/widgets/contacts/contact_card.dart';
+import 'package:flutter_frontend/widgets/contacts/contacts_browser.dart';
 import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
 import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
@@ -135,23 +137,17 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
           children: [
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
-              left:navbarSize.width,
+              left:navbarSize.width+20,
               bottom: layoutIsMobile? 0:0,
-              width: width-navbarSize.width,
+              width: width-navbarSize.width-40,
               height: height - navbarSize.height,
               child: contactsAsync.when(
                 data: (contacts) {
                   if (contacts.isEmpty) {
                     return const Center(child: Text('No contacts found'));
                   }
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: contacts.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      final contact = contacts[index];
-                      return _ContactCard(contact: contact);
-                    },
+                  return ContactsBrowser(
+                    contacts: contacts,
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -188,6 +184,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                         child: Navbar(
                           size: navbarSize,
                           sidebar: false,
+                          page: AppPage.contacts,
                         )
                       ),
                     )
@@ -197,71 +194,6 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ContactCard extends StatelessWidget {
-  final ContactModel contact;
-
-  const _ContactCard({required this.contact});
-
-  @override
-  Widget build(BuildContext context) {
-    // Determine icon based on isCompany
-    final icon = contact.isCompany ? Icons.business : Icons.person;
-    final iconColor = contact.isCompany ? Colors.blue : Colors.green;
-
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: iconColor.withOpacity(0.1),
-        child: contact.image128 != null && contact.image128!.isNotEmpty
-            ? ClipOval(
-                child: Image.memory(
-                  base64Decode(contact.image128!),
-                  fit: BoxFit.cover,
-                  width: 40,
-                  height: 40,
-                  errorBuilder: (_, __, ___) => Icon(icon, color: iconColor),
-                ),
-              )
-            : Icon(icon, color: iconColor),
-      ),
-      title: Row(
-        children: [
-          Expanded(
-            child: Text(
-              contact.displayName ?? contact.name ?? 'Unnamed',
-              style: const TextStyle(fontWeight: FontWeight.w500),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (contact.isCompany)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'COMPANY',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-        ],
-      ),
-      subtitle: Text(
-        contact.email ?? contact.phone ?? contact.city ?? '',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.go('/contacts/${contact.id}'),
     );
   }
 }

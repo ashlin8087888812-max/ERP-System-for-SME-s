@@ -109,6 +109,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
                       child: Navbar(
                         size: navbarSize,
                         sidebar: sidebar,
+                        page: AppPage.dashboard,
                       )
                     ),
                   )

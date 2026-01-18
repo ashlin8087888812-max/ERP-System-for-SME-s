@@ -26,11 +26,13 @@ class Navbar extends ConsumerWidget {
   final bool isPotrait;
   final Size size;
   final bool sidebar;
+  final AppPage page;
   const Navbar({
     super.key,
     this.isPotrait = false,
     required this.size,
     this.sidebar = false,
+    required this.page,
   });
   
 
@@ -118,17 +120,25 @@ class Navbar extends ConsumerWidget {
                                 const SizedBox(height: 50),
                                 HoverIcon(
                                   label: 'Dashboard',
-                                  icon: SvgPicture.asset(
-                                    'assets/icons/dashboard_2.svg',
-                                    color: palette.extras[1],
+                                  icon: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: SvgPicture.asset(
+                                      'assets/icons/dashboard_2.svg',
+                                      color: palette.extras[1],
+                                    ),
                                   ),
                                   onTap: () => context.go('/dashboard'),
+                                  elevate: page != AppPage.dashboard,
                                 ),
-                            
+
+                                spacing,
+                                
                                 HoverIcon(
                                   label: 'Contacts',
                                   icon: tabler.UserFilled(color:palette.extras[1]),
                                   onTap: () => context.go('/contacts'),
+                                  elevate: page != AppPage.contacts,
                                 ),
                             
                                 spacing,
@@ -137,6 +147,7 @@ class Navbar extends ConsumerWidget {
                                   label: 'Threads',
                                   icon: tabler.MessageFilled(color: palette.extras[1]),
                                   onTap: () => context.go('/threads'),
+                                  elevate: page != AppPage.threads,
                                 ),
                             
                                 spacing,
@@ -145,6 +156,7 @@ class Navbar extends ConsumerWidget {
                                   label: 'Profiles',
                                   icon: tabler.CategoryFilled(color: palette.extras[1],),
                                   onTap: () => context.go('/profiles'),
+                                  elevate: page != AppPage.profiles,
                                 ),
                                 spacing,
                             
@@ -152,6 +164,7 @@ class Navbar extends ConsumerWidget {
                                   label: 'Settings',
                                   icon: tabler.SettingsFilled(color: palette.extras[1],),
                                   onTap: () => context.go('/settings'),
+                                  elevate: page != AppPage.settings,
                                 ),
                               ],
                             ),
