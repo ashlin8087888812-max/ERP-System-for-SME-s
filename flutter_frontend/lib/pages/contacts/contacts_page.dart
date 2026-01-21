@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:alphabet_scrollbar/alphabet_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
+import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/contacts/contact_card.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_browser.dart';
+import 'package:flutter_frontend/widgets/contacts/contacts_title.dart';
 import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
 import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
@@ -27,6 +30,8 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
   Timer? _debounce;
   String _searchQuery = '';
   String _selectedType = 'both'; // Filter: 'both', 'person', 'company'
+  final ValueNotifier<String> _selectedLetter = ValueNotifier("A");
+
 
   @override
   void dispose() {
@@ -57,7 +62,8 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
     const SizedBox spacing  = SizedBox(height: 15);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    Size navbarSize = Size(60, 60);
+    Size navbarSize = Size(layoutIsMobile?0:60,layoutIsMobile? 60:0);
+    Size filterbarSize = Size(layoutIsMobile? 0:120, layoutIsMobile? 60:0);
     // Build filter params
     final filter = ContactsFilter(
       q: _searchQuery.isNotEmpty ? _searchQuery : null,
@@ -137,21 +143,46 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
           children: [
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
-              left:navbarSize.width+20,
+              left:navbarSize.width+filterbarSize.width+20,
               bottom: layoutIsMobile? 0:0,
-              width: width-navbarSize.width-40,
+              width: width-navbarSize.width-filterbarSize.width-45,
               height: height - navbarSize.height,
-              child: contactsAsync.when(
-                data: (contacts) {
-                  if (contacts.isEmpty) {
-                    return const Center(child: Text('No contacts found'));
-                  }
-                  return ContactsBrowser(
-                    contacts: contacts,
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('Error: $err')),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: const ContactsTitle()),
+                      Expanded(
+                        flex: 1,
+                        child: const Placeholder(
+                          fallbackHeight: 200,
+                        )),
+                    ],
+                  ),
+                  Expanded(
+                    child: contactsAsync.when(
+                      data: (contacts) {
+                        if (contacts.isEmpty) {
+                          return const Center(child: Text('No contacts found'));
+                        }
+                        return ValueListenableBuilder<String>(
+                          valueListenable: _selectedLetter,
+                          builder: (context, letter, _) {
+                            return ContactsBrowser(
+                              contacts: contacts,
+                              letter: letter,
+                            );
+                          },
+                        );
+                      },
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (err, stack) => Center(child: Text('Error: $err')),
+                    ),
+                  ),
+                ],
               ),
             ),
             AnimatedPositioned(
@@ -191,6 +222,50 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                   ],
                 )
               ),
+            Positioned(
+                right: 6,
+                height: height - (layoutIsMobile? navbarSize.height:0),
+                child: AlphabetScrollbar(
+                  //onLetterChange is needed and should contain a Function(String letter), where you handle your Scrolling. 
+                  onLetterChange: (value) {
+                    _selectedLetter.value = value;
+                  },
+                  reverse: false, //optional. would Reverse the Order (Z-A).
+                  switchToHorizontal: false, //optional. makes the Scrollbar Horizontally not Verticaly.
+                  factor: 10,
+                  //optional. changes the side to left (if switchToHorizontal also True,Switches to Top)
+                  leftSidedOrTop: false, 
+                  selectedLetterSize: 55,
+                  selectedLetterColor: palette.white,
+                  selectedLettercontainerPadding: EdgeInsets.all(12),
+                  selectedLetterContainerDecoration: BoxDecoration(
+                    color: palette.extras[1],
+                    border: Border.all(
+                      color: palette.white,
+                      width: 2,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.extras[1].withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(
+                    color: palette.black,
+                    fontSize: 14,
+                    letterSpacing: -0.2,
+                    fontFamily: 'Lexend',
+                    fontWeight: FontWeight.w300,
+                    fontVariations: [
+                      FontVariation('wght', 300),
+                    ],
+                  ),
+                ),
+              )
+            
           ],
         ),
       ),

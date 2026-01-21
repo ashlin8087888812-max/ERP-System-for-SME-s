@@ -1,23 +1,17 @@
+import 'package:alphabet_scrollbar/alphabet_scrollbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/models/branch_model.dart';
 import 'package:flutter_frontend/models/contact_model.dart';
-import 'package:flutter_frontend/utils/branches.dart';
-import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/contacts/contact_card.dart';
-import 'package:flutter_frontend/widgets/decorated_icon.dart';
-import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
-import 'package:flutter_frontend/widgets/sidebar/branch_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 class ContactsBrowser extends ConsumerStatefulWidget {
   final List<ContactModel> contacts;
-  const ContactsBrowser({super.key, required this.contacts});
+  final String letter;
+  const ContactsBrowser({super.key, required this.contacts, required this.letter});
 
   @override
   ConsumerState<ContactsBrowser> createState() => _ContactsBrowserState();
@@ -26,87 +20,151 @@ class ContactsBrowser extends ConsumerStatefulWidget {
 class _ContactsBrowserState extends ConsumerState<ContactsBrowser> {
   String _selectedFilter = 'All';
   String _searchQuery = '';
+  late List<ContactModel> _filteredContacts;
+  ScrollController? _scrollController;
+  static const double _itemHeight = 270;
+  
+  double _gridWidth =0;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateFilteredContacts();
+  }
+
+  @override
+  void didUpdateWidget(ContactsBrowser oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.contacts != widget.contacts) {
+      _updateFilteredContacts();
+    }
+    if (oldWidget.letter != widget.letter) {
+      scrollToLetter(widget.letter);
+    }
+  }
+  
+  void scrollToTop() {
+    _scrollController?.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void scrollToLetter(String letter) {
+    final index = _filteredContacts.indexWhere((c) =>
+        (c.name ?? '').toLowerCase().startsWith(letter.toLowerCase()));
+
+    if (index == -1) return;
+
+    final double gridWidth = _gridWidth;
+    const double minCrossAxisExtent = _itemHeight*1.1;
+    const double crossAxisSpacing = 12;
+    const double mainAxisSpacing = 12;
+
+    final int crossAxisCount =
+        ((gridWidth + crossAxisSpacing) / (minCrossAxisExtent))
+            .round();
+    final int rowIndex = index ~/ crossAxisCount;
+    final double rowHeight = _itemHeight + mainAxisSpacing;
+
+    final double targetOffset = (rowIndex * rowHeight);
+
+    _scrollController?.animateTo(
+      targetOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
 
 
-  List<ContactModel> get _filteredContacts {
-    return widget.contacts.where((contact) {
+  void _updateFilteredContacts() {
+    _filteredContacts = widget.contacts.where((contact) {
       final matchesSearch = contact.name?.toLowerCase().contains(_searchQuery.toLowerCase());
-      // final matchesFilter = _selectedFilter == 'All' || contact.category == _selectedFilter;
       return matchesSearch ?? false;
     }).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    final layoutTier = ref.watch(layoutTierProvider);
-    final layoutOrientation = ref.watch(layoutOrientationProvider);
-    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
-    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
-    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
-    
+    print('rebuilding contacts_browser');
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
         
         // Module Grid
         Expanded(
-          child: ScrollConfiguration(
-            behavior: ScrollBehavior().copyWith(scrollbars: false),
-            child: DynMouseScroll(
-              scrollSpeed: 1,
-              builder: (context, controller, physics) {
-                return ShaderMask(
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (rect) {
-                    return const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black,
-                        Colors.black,
-                      ],
-                      stops: [0.0, 0.03, 1.0],
-                    ).createShader(rect);
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              _gridWidth = constraints.maxWidth;
+              return ScrollConfiguration(
+                behavior: ScrollBehavior().copyWith(scrollbars: false),
+                child: DynMouseScroll(
+                  durationMS: 500,
+                  scrollSpeed: 1,
+                  builder: (context, controller, physics) {
+                    if (!identical(_scrollController, controller)) {
+                      _scrollController = controller;
+                    }
+                    return ShaderMask(
+                      blendMode: BlendMode.dstIn,
+                      shaderCallback: (rect) {
+                        return const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black,
+                            Colors.black,
+                          ],
+                          stops: [0.0, 0.03, 1.0],
+                        ).createShader(rect);
+                      },
+                      child: CustomScrollView(
+                        controller: controller,
+                        physics: physics,
+                        cacheExtent: 1200 ,
+                        slivers: [
+                          // TOP SCROLLING SPACER (replaces your SizedBox)
+                          SliverToBoxAdapter(
+                            child: SizedBox(height: mapUniformScale(20, 38, width, height)),
+                          ),
+                  
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                return ContactCard(
+                                  key: ValueKey(_filteredContacts[index].id),
+                                  contact: _filteredContacts[index],
+                                );
+                              },
+                              childCount: _filteredContacts.length,
+                              addAutomaticKeepAlives: true,
+                              addRepaintBoundaries: true, // We're adding manually above
+                            ),
+                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 400,
+                              mainAxisExtent: _itemHeight,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 1.1,
+                            ),
+                          ),
+                  
+                          // BOTTOM SCROLLING SPACER
+                          const SliverToBoxAdapter(
+                            child: SizedBox(height: 24),
+                          ),
+                        ],
+                      ),
+                    );
                   },
-                  child: CustomScrollView(
-                    controller: controller,
-                    physics: physics,
-                    slivers: [
-                      // TOP SCROLLING SPACER (replaces your SizedBox)
-                      SliverToBoxAdapter(
-                        child: SizedBox(height: mapUniformScale(20, 38, width, height)),
-                      ),
-
-                      SliverGrid(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            return ContactCard(
-                              contact: _filteredContacts[index],
-                            );
-                          },
-                          childCount: _filteredContacts.length,
-                        ),
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 400,
-                          mainAxisExtent: 270,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1.1,
-                        ),
-                      ),
-
-                      // BOTTOM SCROLLING SPACER
-                      const SliverToBoxAdapter(
-                        child: SizedBox(height: 24),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                ),
+              );
+            }
           ),
         ),
       ],
@@ -148,6 +206,8 @@ class _ContactsBrowserState extends ConsumerState<ContactsBrowser> {
       ),
     );
   }
+
+
 }
 
 

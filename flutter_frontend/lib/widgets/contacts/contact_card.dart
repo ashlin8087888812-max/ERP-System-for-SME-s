@@ -12,23 +12,49 @@ import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 class ContactCard extends StatefulWidget {
   final ContactModel contact;
 
-  const ContactCard({required this.contact});
+  const ContactCard({super.key, required this.contact});
 
   @override
   State<ContactCard> createState() => _ContactCardState();
 }
 
-class _ContactCardState extends State<ContactCard> {
-  bool _isHovered = false;
+class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  ImageProvider? _imageProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateImageProvider();
+  }
+
+  @override
+  void didUpdateWidget(ContactCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Only update the image provider if the image data actually changed
+    if (oldWidget.contact.image128 != widget.contact.image128) {
+      _updateImageProvider();
+    }
+  }
+
+  void _updateImageProvider() {
+    if (widget.contact.image128 != null) {
+      _imageProvider = MemoryImage(base64Decode(widget.contact.image128!));
+    } else {
+      _imageProvider = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     // Determine icon based on isCompany
     final icon = widget.contact.isCompany ? Icons.business : Icons.person;
     final iconColor = palette.extras[0];
+    print('rebuilding contacts_card');
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (event) => setState(() => _isHovered = true),
-      onExit: (event) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: () {
           context.push('/contacts/${widget.contact.id}');
@@ -96,9 +122,7 @@ class _ContactCardState extends State<ContactCard> {
                             ],
                         ),
                       ),
-                                   
-                      AnimatedPositioned(
-                        duration: const Duration(milliseconds: 300),
+                      Positioned(
                         bottom:0,
                         width: constraints.maxWidth,
                         child: InnerShadow(
@@ -137,13 +161,12 @@ class _ContactCardState extends State<ContactCard> {
                                   children: [
                                     SizedBox(width: 15,),
                                     SizedBox(
-                                      width: _isHovered ? 75 : 60,
+                                      width: 60,
                                       child: Stack(
                                         children: [
-                                          AnimatedContainer(
-                                            duration: const Duration(milliseconds: 200),
-                                            height: _isHovered ? 75 : 60,
-                                            width: _isHovered ? 75 : 60,
+                                          Container(
+                                            height:  60,
+                                            width:  60,
                                             alignment: Alignment(0,0.5),
                                             margin: EdgeInsets.only(top:25),
                                             decoration: BoxDecoration(
@@ -152,20 +175,19 @@ class _ContactCardState extends State<ContactCard> {
                                               
                                             ),
                                           ),
-                                          AnimatedContainer(
-                                            duration: const Duration(milliseconds: 200),
-                                            height: _isHovered ? 75 : 60,
-                                            width: _isHovered ? 75 : 60,
+                                          Container(
+                                            height:60,
+                                            width:60,
                                             decoration: BoxDecoration(
                                               color: palette.extras[1],
                                               shape: BoxShape.circle,
                                               border: Border.all(color: palette.extras[1], width: 2),
-                                              image: widget.contact.image128 != null ? DecorationImage(
-                                                image: MemoryImage(base64Decode(widget.contact.image128!)),
+                                              image: _imageProvider != null ? DecorationImage(
+                                                image: _imageProvider!,
                                                 fit: BoxFit.cover,
                                               ) : null,
                                             ),
-                                            child: widget.contact.image128 == null ? Center(
+                                            child: _imageProvider == null ? Center(
                                               child: Icon(icon, color: palette.extras[0], ),
                                             ) : null,
                                           ),
@@ -321,11 +343,9 @@ class _ContactCardState extends State<ContactCard> {
                           ),
                         ),
                       ),
-                      
-                      
                     ],
                   ),
-                      );
+            );
           }
         ),
       ),
