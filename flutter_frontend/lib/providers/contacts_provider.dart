@@ -13,13 +13,13 @@ final webSocketServiceProvider = Provider<WebSocketService>((ref) {
   return di.sl<WebSocketService>();
 });
 
-class ContactsFilter extends Equatable {
+class ContactsQuery extends Equatable {
   final String? q;
   final String type;
   final int limit;
   final int offset;
 
-  const ContactsFilter({
+  const ContactsQuery({
     this.q,
     this.type = 'both',
     this.limit = 50,
@@ -30,7 +30,7 @@ class ContactsFilter extends Equatable {
   List<Object?> get props => [q, type, limit, offset];
 }
 
-final contactsListProvider = FutureProvider.autoDispose.family<List<ContactModel>, ContactsFilter>(
+final contactsListProvider = FutureProvider.autoDispose.family<List<ContactModel>, ContactsQuery>(
   (ref, filter) {
     final repo = ref.read(contactsRepositoryProvider);
     final wsService = ref.read(webSocketServiceProvider);

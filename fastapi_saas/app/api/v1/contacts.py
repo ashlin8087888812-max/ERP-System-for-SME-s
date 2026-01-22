@@ -250,18 +250,25 @@ def count_contacts(
     if supplier_only:
         domain.append(["supplier_rank", ">", 0])
     
-    # Search filter
+    # Search filter - Build properly nested OR domain
     if q:
+        # Properly nest OR operators: ['|', cond1, ['|', cond2, ['|', cond3, ...]]]
         search_domain = [
-            "|", "|", "|", "|", "|",
-            ["name", "ilike", q],
-            ["email", "ilike", q],
-            ["phone", "ilike", q],
-            ["vat", "ilike", q],
+            "|", ["name", "ilike", q],
+            "|", ["email", "ilike", q],
+            "|", ["phone", "ilike", q],
+            "|", ["vat", "ilike", q],
             ["company_name", "ilike", q],
         ]
-        # Proper AND grouping to prevent precedence issues
-        domain = ["&"] + search_domain + domain if domain else search_domain
+        # Combine with other filters using AND
+        if domain:
+            # Properly nest AND operators for each existing filter
+            result_domain = search_domain
+            for filter_condition in domain:
+                result_domain = ["&", result_domain, filter_condition]
+            domain = result_domain
+        else:
+            domain = search_domain
 
     try:
         count = odoo_client.execute_kw(
@@ -314,18 +321,25 @@ def list_contacts(
     if supplier_only:
         domain.append(["supplier_rank", ">", 0])
     
-    # Search filter (FIXED: proper AND grouping)
+    # Search filter - Build properly nested OR domain
     if q:
+        # Properly nest OR operators: ['|', cond1, ['|', cond2, ['|', cond3, ...]]]
         search_domain = [
-            "|", "|", "|", "|", "|",
-            ["name", "ilike", q],
-            ["email", "ilike", q],
-            ["phone", "ilike", q],
-            ["vat", "ilike", q],
+            "|", ["name", "ilike", q],
+            "|", ["email", "ilike", q],
+            "|", ["phone", "ilike", q],
+            "|", ["vat", "ilike", q],
             ["company_name", "ilike", q],
         ]
-        # FIXED: Combine search with other filters using AND
-        domain = ["&"] + search_domain + domain if domain else search_domain
+        # Combine with other filters using AND
+        if domain:
+            # Properly nest AND operators for each existing filter
+            result_domain = search_domain
+            for filter_condition in domain:
+                result_domain = ["&", result_domain, filter_condition]
+            domain = result_domain
+        else:
+            domain = search_domain
 
     # Field list for LIST view (optimized - only standard Odoo fields)
     fields = [

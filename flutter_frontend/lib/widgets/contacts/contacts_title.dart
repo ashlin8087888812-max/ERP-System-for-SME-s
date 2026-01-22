@@ -9,26 +9,30 @@ class ContactsTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Text(
             "Contacts",
             style: TextStyle(
               fontFamily: "Lexend",
-              fontSize: 70,
+              fontSize: 120,
               fontWeight: FontWeight.w600,
               color: palette.black,
               letterSpacing: -6,
             ),
           ),
         ),
-        DecoratedIcon(
-          iconSvg: contacts.iconSvg, 
-          offset: contacts.offset, 
-          overlaySvg: contacts.overlaySvg, 
-          iconSize: 70, 
-          showOverlay: contacts.showOverlay,
-          overlaySize: contacts.overlaySize)
+        Transform.scale(
+          scale: 2,
+          child: DecoratedIcon(
+            iconSvg: contacts.iconSvg, 
+            offset: contacts.offset, 
+            overlaySvg: contacts.overlaySvg, 
+            iconSize: 50, 
+            showOverlay: contacts.showOverlay,
+            overlaySize: contacts.overlaySize),
+        )
       ],
     );
   }

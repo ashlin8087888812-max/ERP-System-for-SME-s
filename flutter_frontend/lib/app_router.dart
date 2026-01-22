@@ -30,6 +30,10 @@ class AppRouter {
       },
       routes: [
         GoRoute(
+          path: '/',
+          builder: (context, state) => DashboardPage(sidebar: false),
+        ),
+        GoRoute(
           path: '/login',
           builder: (context, state) => const LoginPage(),
         ),

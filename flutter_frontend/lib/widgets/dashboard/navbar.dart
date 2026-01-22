@@ -9,7 +9,7 @@ import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/utils/stripes_painter.dart';
 import 'package:flutter_frontend/utils/tabler_icon.dart';
 import 'package:flutter_frontend/utils/visibility_observer.dart';
-import 'package:flutter_frontend/widgets/gestace_title.dart';
+import 'package:flutter_frontend/widgets/titles/gestace_title.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
 import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/sidebar/branch_browser.dart';
