@@ -4,7 +4,8 @@ import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/decorated_icon.dart';
 
 class ContactsTitle extends StatelessWidget {
-  const ContactsTitle({super.key});
+  final double scale;
+  const ContactsTitle({super.key, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -12,19 +13,24 @@ class ContactsTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Text(
-            "Contacts",
-            style: TextStyle(
-              fontFamily: "Lexend",
-              fontSize: 120,
-              fontWeight: FontWeight.w600,
-              color: palette.black,
-              letterSpacing: -6,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Contacts",
+              style: TextStyle(
+                fontFamily: "Lexend",
+                fontSize: 120,
+                fontWeight: FontWeight.w600,
+                color: palette.black,
+                letterSpacing: -6,
+              ),
             ),
           ),
         ),
+        SizedBox(width: 40),
         Transform.scale(
-          scale: 2,
+          scale: scale,
           child: DecoratedIcon(
             iconSvg: contacts.iconSvg, 
             offset: contacts.offset, 

@@ -63,7 +63,7 @@ class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClient
           builder: (context, constraints) {
             return Container(
                   decoration: BoxDecoration(
-                    color: palette.extras[0],
+                    color: palette.extras[4],
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(

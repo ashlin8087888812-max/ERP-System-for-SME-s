@@ -62,12 +62,18 @@ class _ContactsBrowserState extends ConsumerState<ContactsBrowser> {
     const double crossAxisSpacing = 12;
     const double mainAxisSpacing = 12;
 
-    final int crossAxisCount =
-        ((gridWidth + crossAxisSpacing) / (minCrossAxisExtent))
-            .round();
+    final double raw =
+    (gridWidth + crossAxisSpacing) / minCrossAxisExtent;
+
+    final int base = raw.floor();
+    final double frac = raw - base;
+
+    final int crossAxisCount = (frac >= 0.8) ? raw.ceil() : base;
+
     final int rowIndex = index ~/ crossAxisCount;
     final double rowHeight = _itemHeight + mainAxisSpacing;
-
+    print('crossAxisCount: $crossAxisCount');
+    print('crossAxisCount: ${((gridWidth + crossAxisSpacing) / (minCrossAxisExtent))}');
     final double targetOffset = (rowIndex * rowHeight);
 
     _scrollController?.animateTo(

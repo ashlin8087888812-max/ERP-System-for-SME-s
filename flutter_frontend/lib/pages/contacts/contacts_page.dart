@@ -7,9 +7,14 @@ import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
+import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
+import 'package:flutter_frontend/utils/sized_box_ops.dart';
+import 'package:flutter_frontend/widgets/contacts/contact_add.dart';
 import 'package:flutter_frontend/widgets/contacts/contact_card.dart';
+import 'package:flutter_frontend/widgets/contacts/contact_fields_list.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_browser.dart';
+import 'package:flutter_frontend/widgets/contacts/contacts_export.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_title.dart';
 import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
@@ -81,171 +86,24 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 
     return Scaffold(
       backgroundColor: palette.white,
-      appBar: AppBar(
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () => context.go('/dashboard'),
-        //   tooltip: 'Back to Dashboard',
-        // ),
-        // title: const Text('Contacts'),
-        // bottom: PreferredSize(
-        //   preferredSize: const Size.fromHeight(60),
-        //   child: Padding(
-        //     padding: const EdgeInsets.all(8.0),
-        //     child: TextField(
-        //       controller: _searchController,
-        //       decoration: InputDecoration(
-        //         hintText: 'Search contacts...',
-        //         prefixIcon: const Icon(Icons.search),
-        //         border: OutlineInputBorder(
-        //           borderRadius: BorderRadius.circular(10),
-        //           borderSide: BorderSide.none,
-        //         ),
-        //         filled: true,
-        //         fillColor: Colors.white,
-        //         contentPadding: const EdgeInsets.symmetric(vertical: 0),
-        //       ),
-        //       onChanged: _onSearchChanged,
-        //     ),
-        //   ),
-        // ),
-        actions: [
-          // Filter menu
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            tooltip: 'Filter contacts',
-            initialValue: _selectedType,
-            onSelected: (String value) {
-              setState(() {
-                _selectedType = value;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'both',
-                child: Text('All Contacts'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'person',
-                child: Text('Persons Only'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'company',
-                child: Text('Companies Only'),
-              ),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              context.go('/contacts/new');
-            },
-            tooltip: 'Add Contact',
-          ),
-        ],
-      ),
       body: AdaptiveLayout(
         child: Stack(
           children: [
+            //Browser
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
-              left:navbarSize.width+filterbarSize.width+20,
-              bottom: layoutIsMobile? 0:0,
-              width: width-navbarSize.width-filterbarSize.width-45,
+              left: layoutIsMobile
+                ? width/2
+                : (navbarSize.width+filterbarSize.width+20),
+              top: layoutIsMobile? 0:380,
+              width: layoutIsMobile
+                ? width/2-25
+                : (width-navbarSize.width-filterbarSize.width-45),
               height: height - (layoutIsPortrait? navbarSize.height:0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 15,
-                        child: SizedBox(
-                          height: 380,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  alignment: Alignment.topCenter,
-                                  padding: const EdgeInsets.only(left: 0,right: 150),
-                                  child: const ContactsTitle(),
-                                ),
-                              ),
-                              // Search Bar
-                              Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(color: palette.black, width: 0.8),
-                                ),
-                                child: TextField(
-                                  onChanged: (value) => _onSearchChanged(value),
-                                  controller: _searchController,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  style: TextStyle(
-                                      color: palette.black,
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w200,
-                                      fontFamily: 'Lexend',
-                                      fontVariations: [
-                                        FontVariation('wght', 300),
-                                      ],
-                                    ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Search',
-                                    
-                                    hintStyle: TextStyle(
-                                      color: palette.black,
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w200,
-                                      fontFamily: 'Lexend',
-                                      fontVariations: [
-                                        FontVariation('wght', 300),
-                                      ],
-                                    ),
-                                    prefixIcon: Padding(
-                                      padding: const EdgeInsets.only(left: 15,top: 5,right: 5),
-                                      child: tabler.Search(strokeWidth: 0.6,width: 50,height: 50,),
-                                    ),
-                                    border: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                              spacing,
-                              Row(
-                                children: [
-                                  Text('Group By:',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: palette.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w200,
-                                    fontFamily: 'Lexend',
-                                    fontVariations: [
-                                      FontVariation('wght', 300),
-                                    ],
-                                  ),),
-                                  const SizedBox(width: 8),
-                                  _buildGroupChip('All'),
-                                  const SizedBox(width: 8),
-                                  _buildGroupChip('Sales'),
-                                  const SizedBox(width: 8),
-                                  _buildGroupChip('Accounting'),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )),
-                      Expanded(
-                        flex: 10,
-                        child: const Placeholder(
-                          fallbackHeight: 320,
-                        )),
-                    ],
-                  ),
+                  
                   Expanded(
                     child: contactsAsync.when(
                       data: (contacts) {
@@ -265,6 +123,121 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                       loading: () => const Center(child: CircularProgressIndicator()),
                       error: (err, stack) => Center(child: Text('Error: $err')),
                     ),
+                  ),
+                ],
+              ),
+            ),
+            //Title, serach and Menus
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              left: layoutIsMobile
+                ? navbarSize.width+15
+                : navbarSize.width+filterbarSize.width+20,
+              top:0,
+              width: layoutIsMobile 
+                ? width/2 -100
+                : width-navbarSize.width-filterbarSize.width-45,
+              height:layoutIsMobile? mapUniformScale(240, 800, width,height): 380,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 15,
+                        child: SizedBox(
+                          height: layoutIsMobile? mapUniformScale(240, 800, width,height): 380,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              spacing+mapUniformScale(45, 20, width,height),
+                              //Contacts title
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.topCenter,
+                                  padding: EdgeInsets.only(left: 0,right: mapUniformScale(80, 150, width,height)),
+                                  child: ContactsTitle(scale: mapUniformScale(1, 3, width,height)),
+                                ),
+                              ),
+                              // Search Bar
+                              Container(
+                                height: mapUniformScale(40, 60, width,height),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(color: palette.black, width: 0.8),
+                                ),
+                                child: TextField(
+                                  onChanged: (value) => _onSearchChanged(value),
+                                  controller: _searchController,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  style: TextStyle(
+                                      color: palette.black,
+                                      fontSize: mapUniformScale(24, 32, width,height),
+                                      fontWeight: FontWeight.w200,
+                                      fontFamily: 'Lexend',
+                                      fontVariations: [
+                                        FontVariation('wght', 300),
+                                      ],
+                                    ),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search',
+                                    
+                                    hintStyle: TextStyle(
+                                      color: palette.black,
+                                      fontSize: mapUniformScale(24, 32, width,height),
+                                      fontWeight: FontWeight.w200,
+                                      fontFamily: 'Lexend',
+                                      fontVariations: [
+                                        FontVariation('wght', 300),
+                                      ],
+                                    ),
+                                    prefixIcon: Padding(
+                                      padding: EdgeInsets.only(left: 15,top: mapUniformScale(2, 5, width,height),right: 5),
+                                      child: tabler.Search(strokeWidth: 0.6,width: mapUniformScale(24, 50, width,height),height: mapUniformScale(24, 50, width,height),),
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              spacing,
+                              //Group by Chips
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  children: [
+                                    Text('Group By:',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: palette.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w200,
+                                      fontFamily: 'Lexend',
+                                      fontVariations: [
+                                        FontVariation('wght', 300),
+                                      ],
+                                    ),),
+                                    const SizedBox(width: 8),
+                                    _buildGroupChip('All'),
+                                    const SizedBox(width: 8),
+                                    _buildGroupChip('Sales'),
+                                    const SizedBox(width: 8),
+                                    _buildGroupChip('Accounting'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                      if(!layoutIsMobile)
+                      Expanded(
+                        flex: 10,
+                        child: const Placeholder(
+                          fallbackHeight: 320,
+                        )),
+                    ],
                   ),
                 ],
               ),
@@ -311,17 +284,37 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               left: layoutIsMobile
-                  ? layoutIsPortrait
-                    ? 14
-                    : -navbarSize.width
-                  : navbarSize.width+8,
-              bottom: layoutIsMobile? filterbarSize.height:0,
-              width: layoutIsPortrait? width-14:filterbarSize.width,
-              height: layoutIsPortrait? navbarSize.height:height,
+                ? layoutIsPortrait
+                  ? 14
+                  : navbarSize.width+8
+                : navbarSize.width+8,
+              top: layoutIsMobile
+                ? layoutIsPortrait
+                  ? null
+                  : mapUniformScale(240, 800, width,height) +10
+                : null,
+              bottom: layoutIsMobile
+                ? layoutIsPortrait
+                  ? filterbarSize.height
+                  : null
+                : 0,
+              width: layoutIsMobile
+                ? layoutIsPortrait
+                  ? width-14
+                  : width/2 -80
+                : filterbarSize.width,
+              height: layoutIsMobile? layoutIsPortrait
+                ? navbarSize.height
+                : height-mapUniformScale(240, 800, width,height)-20
+                : height,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
+                padding: EdgeInsets.symmetric(horizontal: layoutIsMobile? 12: 24),
+                child: Flex(
+                  direction: layoutIsMobile? Axis.horizontal: Axis.vertical,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    //Gestace Title
+                    if(!layoutIsMobile)
                     InnerShadow(
                       shadows: [
                       if(layoutIsLandscape)  Shadow(
@@ -353,26 +346,72 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                       ),
                     ),
                     spacing,
-                    ContactsFilter(
-                      onChange: (person, company) {
-                        if (person){
-                          _selectedType = 'people';
-                        } else if (company){
-                          _selectedType = 'company';
-                        }
-                        setState(() {
-                          _showPeople = person;
-                          _showCompany = company;
-                        });
-                      },
+                    //Contacts Filter
+                    layoutIsMobile? Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentGeometry.topLeft,
+                        child: SizedBox(
+                          width: 150,
+                          child: ContactsFilter(
+                            layoutIsPortrait: layoutIsPortrait,
+                            layoutIsMobile: layoutIsMobile,
+                            onChange: (person, company) {
+                              if (person && company){
+                                _selectedType = 'both';
+                              } else if (person && !company){
+                                _selectedType = 'person';
+                              } else if (!person && company){
+                                _selectedType = 'company';
+                              }
+                              setState(() {
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ):ContactsFilter(
+                      layoutIsPortrait: layoutIsPortrait,
+                      layoutIsMobile: layoutIsMobile,
+                        onChange: (person, company) {
+                          if (person && company){
+                            _selectedType = 'both';
+                          } else if (person && !company){
+                            _selectedType = 'person';
+                          } else if (!person && company){
+                            _selectedType = 'company';
+                          }
+                          setState(() {
+                          });
+                        },
+                      ),
+                    SizedBox(height: mapUniformScale(3, 21, width, height),width: 10,),
+
+                    if(layoutIsMobile)
+                    Expanded(child: ContactFieldsList(layoutIsMobile: layoutIsMobile)),
+                    SizedBox(height: mapUniformScale(3, 21, width, height),width: 10,),
+                    //Add Contact Button
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          layoutIsMobile? ContactAddMini(): ContactAdd(),
+                          spacing,
+                          //Export Button
+                          layoutIsMobile? ContactExportMini(): Expanded(child: ContactExport()),
+                          spacing,
+                        ],
+                      ),
                     ),
                   ],
                 )
               ),
             ),
+            //alphabet scrollbar
             Positioned(
                 right: 6,
-                height: height - (layoutIsMobile? navbarSize.height:0),
+                height: height - (layoutIsPortrait? navbarSize.height:0),
                 child: AlphabetScrollbar(
                   //onLetterChange is needed and should contain a Function(String letter), where you handle your Scrolling. 
                   onLetterChange: (value) {

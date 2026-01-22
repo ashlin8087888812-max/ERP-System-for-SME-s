@@ -121,6 +121,7 @@ ColorPalette get palette => ColorPalette(
     Color(0xFF484848),
     Color(0xFFABABAB),
     Color(0xFFFAFAFA),
+    Color(0xFFD7F0FF),
     
   ]
 );

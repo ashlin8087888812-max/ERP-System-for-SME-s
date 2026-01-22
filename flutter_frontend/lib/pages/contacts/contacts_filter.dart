@@ -4,7 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ContactsFilter extends StatefulWidget {
   final Function(bool person, bool company) onChange;
-  const ContactsFilter({super.key, required this.onChange});
+  final bool layoutIsPortrait;
+  final bool layoutIsMobile;
+  const ContactsFilter({super.key, required this.onChange, required this.layoutIsPortrait, required this.layoutIsMobile});
 
   @override
   State<ContactsFilter> createState() => _ContactsFilterState();
@@ -12,7 +14,7 @@ class ContactsFilter extends StatefulWidget {
 
 class _ContactsFilterState extends State<ContactsFilter> {
   // Memory-efficient state storage using primitive booleans
-  bool _showPeople = false;
+  bool _showPeople = true;
   bool _showCompany = true;
   bool _showArchived = false;
 
@@ -20,10 +22,13 @@ class _ContactsFilterState extends State<ContactsFilter> {
   Widget build(BuildContext context) {
     
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4).copyWith(
+        left: widget.layoutIsMobile? 12: 4, 
+        right: widget.layoutIsMobile? 12: 4),
       decoration: BoxDecoration(
         color: palette.white,
         borderRadius: BorderRadius.circular(16),
+        border: widget.layoutIsMobile? Border.all(color: palette.extras[1], width: 1): null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -56,6 +61,8 @@ class _ContactsFilterState extends State<ContactsFilter> {
             activeColor: palette.extras[1],
             inactiveColor: palette.extras[0],
             textColor: palette.extras[1],
+            layoutIsMobile: widget.layoutIsMobile,
+            layoutIsPortrait: widget.layoutIsPortrait,
           ),
           const SizedBox(height: 16),
 
@@ -72,6 +79,8 @@ class _ContactsFilterState extends State<ContactsFilter> {
             activeColor: palette.extras[1],
             inactiveColor: palette.extras[0],
             textColor: palette.extras[1],
+            layoutIsMobile: widget.layoutIsMobile,
+            layoutIsPortrait: widget.layoutIsPortrait,
           ),
           const SizedBox(height: 16),
 
@@ -88,6 +97,8 @@ class _ContactsFilterState extends State<ContactsFilter> {
             activeColor: palette.extras[1],
             inactiveColor: palette.extras[0],
             textColor: palette.extras[1],
+            layoutIsMobile: widget.layoutIsMobile,
+            layoutIsPortrait: widget.layoutIsPortrait,
           ),
           const SizedBox(height: 12),
 
@@ -161,6 +172,8 @@ class _FilterOption extends StatelessWidget {
   final Color activeColor;
   final Color inactiveColor;
   final Color textColor;
+  final bool layoutIsMobile;
+  final bool layoutIsPortrait;
 
   const _FilterOption({
     required this.label,
@@ -170,6 +183,8 @@ class _FilterOption extends StatelessWidget {
     required this.activeColor,
     required this.inactiveColor,
     required this.textColor,
+    required this.layoutIsMobile,
+    required this.layoutIsPortrait,
   });
 
   @override
@@ -189,7 +204,7 @@ class _FilterOption extends StatelessWidget {
                   // Custom toggle switch
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width: 80,
+                    width: layoutIsMobile ? 70 : 80,
                     height: 34,
                     decoration: BoxDecoration(
                       color: palette.white,
