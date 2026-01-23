@@ -8,7 +8,9 @@ import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 class ContactsBrowser extends ConsumerStatefulWidget {
   final List<ContactModel> contacts;
   final String letter;
-  const ContactsBrowser({super.key, required this.contacts, required this.letter});
+  final bool layoutIsPortrait;
+  
+  const ContactsBrowser({super.key, required this.contacts, required this.letter, required this.layoutIsPortrait});
 
   @override
   ConsumerState<ContactsBrowser> createState() => _ContactsBrowserState();
@@ -156,8 +158,8 @@ int crossAxisCount =
                           ),
                   
                           // BOTTOM SCROLLING SPACER
-                          const SliverToBoxAdapter(
-                            child: SizedBox(height: 24),
+                          SliverToBoxAdapter(
+                            child: SizedBox(height: widget.layoutIsPortrait ? 80 : 24),
                           ),
                         ],
                       ),

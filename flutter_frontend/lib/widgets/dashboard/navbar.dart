@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_frontend/pages/sidebar_menu.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/utils/stripes_painter.dart';
-import 'package:flutter_frontend/utils/tabler_icon.dart';
 import 'package:flutter_frontend/utils/visibility_observer.dart';
 import 'package:flutter_frontend/widgets/titles/gestace_title.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
@@ -44,7 +41,6 @@ class Navbar extends ConsumerWidget {
     final layoutTier = ref.watch(layoutTierProvider);
     final layoutOrientation = ref.watch(layoutOrientationProvider);
     final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
-    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
     final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
     final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
     final width = MediaQuery.of(context).size.width;

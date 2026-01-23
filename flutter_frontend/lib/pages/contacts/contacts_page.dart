@@ -104,7 +104,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                 : (width-navbarSize.width-filterbarSize.width-45),
               height: height - (layoutIsMobile
                 ? layoutIsPortrait
-                  ? navbarSize.height
+                  ? 250
                   : 0
                 :380),
               child: Column(
@@ -123,6 +123,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                             return ContactsBrowser(
                               contacts: contacts,
                               letter: letter,
+                              layoutIsPortrait: layoutIsPortrait,
                             );
                           },
                         );
@@ -259,6 +260,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                                       ),
                                     ),
                                   ),
+                                  if(layoutIsPortrait)
                                   InkWell(
                                     onTap: () {
                                       
@@ -304,8 +306,23 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                       if(!layoutIsMobile)
                       Expanded(
                         flex: 10,
-                        child: const Placeholder(
-                          fallbackHeight: 320,
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          height: 380,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentGeometry.topLeft,
+                            child: Container(
+                              height: 480,
+                              width: 240,
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: palette.white,
+                                borderRadius: BorderRadius.circular(25),
+                                border: Border.all(color: palette.black),
+                              ),
+                              child: ContactFieldsList(layoutIsMobile: layoutIsMobile,)),
+                          ),
                         )),
                     ],
                   ),

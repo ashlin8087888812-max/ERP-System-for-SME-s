@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/branch_model.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/decorated_icon.dart';
-import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;

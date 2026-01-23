@@ -5,11 +5,13 @@ class ContactFieldItem {
   final String id;
   final String label;
   final int depth;
+  final bool isHeader;
 
   const ContactFieldItem({
     required this.id,
     required this.label,
     required this.depth,
+    this.isHeader = false,
   });
 }
 
@@ -29,11 +31,11 @@ class _ContactFieldsListState extends State<ContactFieldsList> {
   static const List<ContactFieldItem> _flatFields = [
     ContactFieldItem(id: 'tags', label: 'Contact Tags', depth: 0),
     ContactFieldItem(id: 'industries', label: 'Industries', depth: 0),
-    ContactFieldItem(id: 'localization', label: 'Localization', depth: 0),
+    ContactFieldItem(id: 'localization', label: 'Localization', depth: 0, isHeader: true),
     ContactFieldItem(id: 'countries', label: 'Countries', depth: 1),
     ContactFieldItem(id: 'states', label: 'Fed. States', depth: 1),
     ContactFieldItem(id: 'territories', label: 'Territories', depth: 1),
-    ContactFieldItem(id: 'bank', label: 'Bank', depth: 0),
+    ContactFieldItem(id: 'bank', label: 'Bank', depth: 0, isHeader: true),
     ContactFieldItem(id: 'banks', label: 'Banks', depth: 1),
     ContactFieldItem(id: 'accounts', label: 'Accounts', depth: 1),
   ];
@@ -54,8 +56,7 @@ class _ContactFieldsListState extends State<ContactFieldsList> {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment:
-            widget.layoutIsMobile ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment:CrossAxisAlignment.start,
         children: [
           // Header
           Text(
@@ -79,7 +80,7 @@ class _ContactFieldsListState extends State<ContactFieldsList> {
                   key: ValueKey(item.id),
                   item: item,
                   isSelected: _selectedId == item.id,
-                  onSelect: () => setState(() => _selectedId = item.id),
+                  onSelect: item.isHeader ? null : () => setState(() => _selectedId = item.id),
                   onUnselect: () => setState(() => _selectedId = null),
                 );
               },
@@ -94,14 +95,14 @@ class _ContactFieldsListState extends State<ContactFieldsList> {
 class _TreeItemWidget extends StatelessWidget {
   final ContactFieldItem item;
   final bool isSelected;
-  final VoidCallback onSelect;
+  final VoidCallback? onSelect;
   final VoidCallback onUnselect;
 
   const _TreeItemWidget({
     super.key,
     required this.item,
     required this.isSelected,
-    required this.onSelect,
+    this.onSelect,
     required this.onUnselect,
   });
 
@@ -114,6 +115,8 @@ class _TreeItemWidget extends StatelessWidget {
         child: InkWell(
           onTap: onSelect,
           borderRadius: BorderRadius.circular(12),
+          highlightColor: item.isHeader ? Colors.transparent : null,
+          splashColor: item.isHeader ? Colors.transparent : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -126,11 +129,13 @@ class _TreeItemWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     item.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'Lexend',
                       fontSize: 20,
                       letterSpacing: -0.5,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: isSelected ? FontWeight.w400 : FontWeight.w300,
                       color: palette.extras[1],
                     ),
                   ),

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
-import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;

@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/branch_model.dart';
 import 'package:flutter_frontend/utils/branches.dart';
-import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
-import 'package:flutter_frontend/widgets/decorated_icon.dart';
-import 'package:flutter_frontend/widgets/icons/svg_icons.dart';
 import 'package:flutter_frontend/widgets/sidebar/branch_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
@@ -44,11 +39,6 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    final layoutTier = ref.watch(layoutTierProvider);
-    final layoutOrientation = ref.watch(layoutOrientationProvider);
-    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
-    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
-    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
     
     return Column(
       mainAxisSize: MainAxisSize.max,

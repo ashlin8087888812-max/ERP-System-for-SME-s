@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
-import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/utils/stripes_painter.dart';
@@ -15,9 +14,6 @@ import 'package:flutter_frontend/widgets/hover_icon.dart';
 import 'package:flutter_frontend/widgets/sidebar/module_carousel_cards.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
-import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 import '../providers/auth_provider.dart';
 
 class SidebarMenu extends ConsumerStatefulWidget {
@@ -32,7 +28,6 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -50,7 +45,6 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
     final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
     final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
     final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
-    final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
     const SizedBox spacing  = SizedBox(height: 15,width: 15,);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
@@ -155,52 +149,4 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
     );
   }
 
-  Widget _buildMenuItem(
-    BuildContext context, {
-    required Widget Function(Color) iconBuilder,
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final backgroundColor = isSelected ? Colors.white : const Color(0xFF555555);
-    final foregroundColor = isSelected ? Colors.black : const Color(0xFF8B8B8B);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(34),
-      child: Material(
-        color: backgroundColor,
-        child: InkWell(
-          onTap: onTap,
-          hoverColor: isSelected ? backgroundColor: const Color(0xFF3E3E3E),
-          splashColor: isSelected ? backgroundColor: palette.white,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(34),
-              border: Border.all(color: const Color(0xFF7F7F7F), width: 0.4),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Stack(
-              children: [
-                 Align(
-                  alignment: Alignment.topRight,
-                  child: iconBuilder(foregroundColor),
-                ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    label,
-                    style: GoogleFonts.lexend(
-                      color: foregroundColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

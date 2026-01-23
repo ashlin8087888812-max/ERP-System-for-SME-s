@@ -68,8 +68,6 @@ double mapUniformScale(
   final heightProgress =
       ((sHeight - baseHeight) / (maxHeight - baseHeight)).clamp(0.0, 1.0);
 
-  final widthChanged = sWidth != baseWidth;
-  final heightChanged = sHeight != baseHeight;
 
   final bothIncreased = sWidth > baseWidth && sHeight > baseHeight;
   final bothDecreased = sWidth < baseWidth && sHeight < baseHeight;

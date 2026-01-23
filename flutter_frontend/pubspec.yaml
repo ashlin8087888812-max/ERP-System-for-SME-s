@@ -56,6 +56,7 @@ dependencies:
   lottie: ^3.3.2
   vector_graphics: ^1.1.19
   alphabet_scrollbar: ^0.1.0
+  wolt_modal_sheet: ^0.11.0
 
 dev_dependencies:
   flutter_test:

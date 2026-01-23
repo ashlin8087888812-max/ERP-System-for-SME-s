@@ -108,7 +108,7 @@ class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClient
                                         style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
-                                        color: palette.extras[2],
+                                        color: palette.black.withOpacity(0.3),
                                         letterSpacing: -0.2,
                                         fontFamily: 'Lexend',
                                         ),
