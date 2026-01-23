@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 class HoverIcon extends ConsumerStatefulWidget {
   final String label;

@@ -1,12 +1,9 @@
-import 'package:alphabet_scrollbar/alphabet_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/contact_model.dart';
 import 'package:flutter_frontend/utils/map_function.dart';
-import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/widgets/contacts/contact_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
-import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 class ContactsBrowser extends ConsumerStatefulWidget {
   final List<ContactModel> contacts;
@@ -18,7 +15,6 @@ class ContactsBrowser extends ConsumerStatefulWidget {
 }
 
 class _ContactsBrowserState extends ConsumerState<ContactsBrowser> {
-  String _selectedFilter = 'All';
   String _searchQuery = '';
   late List<ContactModel> _filteredContacts;
   ScrollController? _scrollController;
@@ -58,22 +54,21 @@ class _ContactsBrowserState extends ConsumerState<ContactsBrowser> {
     if (index == -1) return;
 
     final double gridWidth = _gridWidth;
-    const double minCrossAxisExtent = _itemHeight*1.1;
-    const double crossAxisSpacing = 12;
-    const double mainAxisSpacing = 12;
 
-    final double raw =
-    (gridWidth + crossAxisSpacing) / minCrossAxisExtent;
+const double maxCrossAxisExtent = 400;
+const double crossAxisSpacing = 12;
+const double mainAxisSpacing = 12;
 
-    final int base = raw.floor();
-    final double frac = raw - base;
+int crossAxisCount =
+    ((gridWidth + crossAxisSpacing) / (maxCrossAxisExtent + crossAxisSpacing))
+        .ceil()
+        .clamp(1, 999999);
 
-    final int crossAxisCount = (frac >= 0.8) ? raw.ceil() : base;
 
     final int rowIndex = index ~/ crossAxisCount;
     final double rowHeight = _itemHeight + mainAxisSpacing;
-    print('crossAxisCount: $crossAxisCount');
-    print('crossAxisCount: ${((gridWidth + crossAxisSpacing) / (minCrossAxisExtent))}');
+    // print('crossAxisCount: $crossAxisCount');
+    // print('crossAxisCount: ${((gridWidth + crossAxisSpacing) / (maxCrossAxisExtent + crossAxisSpacing))}');
     final double targetOffset = (rowIndex * rowHeight);
 
     _scrollController?.animateTo(
@@ -176,43 +171,6 @@ class _ContactsBrowserState extends ConsumerState<ContactsBrowser> {
       ],
     );
   }
-
-  Widget _buildFilterChip(String label) {
-    final isSelected = _selectedFilter == label;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Material(
-        color: isSelected ? palette.extras[1] : palette.white,
-        child: InkWell(
-          onTap: () => setState(() => _selectedFilter = label),
-          hoverColor: palette.extras[isSelected ?1:0],
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isSelected ? Colors.black : palette.black,
-                width: 0.8,
-              ),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
-                fontSize: 16,
-                letterSpacing: -0.2,
-                fontFamily: 'Lexend',
-                fontVariations: [
-                  FontVariation('wght', 300),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
 
 }
 

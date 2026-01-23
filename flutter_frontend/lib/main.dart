@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_frontend/providers/router_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'app_router.dart';
 import 'providers/auth_provider.dart';
 import 'injection_container.dart' as di;
 

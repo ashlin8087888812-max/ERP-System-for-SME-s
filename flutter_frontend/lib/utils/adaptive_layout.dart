@@ -43,6 +43,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       ref
           .read(layoutOrientationProvider.notifier)
           .updateFromOrientation(orientation);
+          print('AdaptiveLayout: $size, $orientation');
     });
   }
 

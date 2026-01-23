@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:async';
 import 'package:alphabet_scrollbar/alphabet_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/pages/contacts/contacts_filter.dart';
-import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/app_page.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
@@ -11,7 +9,6 @@ import 'package:flutter_frontend/utils/map_function.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_frontend/utils/sized_box_ops.dart';
 import 'package:flutter_frontend/widgets/contacts/contact_add.dart';
-import 'package:flutter_frontend/widgets/contacts/contact_card.dart';
 import 'package:flutter_frontend/widgets/contacts/contact_fields_list.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_browser.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_export.dart';
@@ -22,10 +19,10 @@ import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/titles/gestace_title.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 import '../../providers/contacts_provider.dart';
-import '../../models/contact_model.dart';
 
 class ContactsPage extends ConsumerStatefulWidget {
   const ContactsPage({super.key});
@@ -61,8 +58,6 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
-    final user = authState.user;
     final layoutTier = ref.watch(layoutTierProvider);
     final layoutOrientation = ref.watch(layoutOrientationProvider);
     final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
@@ -93,13 +88,25 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               left: layoutIsMobile
-                ? width/2
+                ? layoutIsPortrait
+                  ? 60
+                  : width/2
                 : (navbarSize.width+filterbarSize.width+20),
-              top: layoutIsMobile? 0:380,
+              top: layoutIsMobile
+              ? layoutIsPortrait
+                  ? 250
+                  : 0
+              : 380,
               width: layoutIsMobile
-                ? width/2-25
+                ? layoutIsPortrait
+                  ? width-85 
+                  : width/2-25
                 : (width-navbarSize.width-filterbarSize.width-45),
-              height: height - (layoutIsPortrait? navbarSize.height:0),
+              height: height - (layoutIsMobile
+                ? layoutIsPortrait
+                  ? navbarSize.height
+                  : 0
+                :380),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -131,13 +138,21 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               left: layoutIsMobile
-                ? navbarSize.width+15
+                ? layoutIsPortrait
+                  ? 25
+                  : navbarSize.width+15
                 : navbarSize.width+filterbarSize.width+20,
               top:0,
               width: layoutIsMobile 
-                ? width/2 -100
+                ? layoutIsPortrait
+                  ? width-60
+                  : width/2 -100
                 : width-navbarSize.width-filterbarSize.width-45,
-              height:layoutIsMobile? mapUniformScale(240, 800, width,height): 380,
+              height:layoutIsMobile
+                ? layoutIsPortrait
+                  ? 250 
+                  : 240
+                : 380,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -147,65 +162,120 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                       Expanded(
                         flex: 15,
                         child: SizedBox(
-                          height: layoutIsMobile? mapUniformScale(240, 800, width,height): 380,
+                          height: layoutIsMobile
+                            ? layoutIsPortrait
+                              ? 250 
+                              : 240
+                            : 380,
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               spacing+mapUniformScale(45, 20, width,height),
                               //Contacts title
                               Expanded(
-                                child: Container(
-                                  alignment: Alignment.topCenter,
-                                  padding: EdgeInsets.only(left: 0,right: mapUniformScale(80, 150, width,height)),
-                                  child: ContactsTitle(scale: mapUniformScale(1, 3, width,height)),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.topCenter,
+                                        padding: EdgeInsets.only(left:layoutIsMobile
+                                        ? layoutIsPortrait
+                                          ? 0
+                                          : 5
+                                        : 0,
+                                        right:layoutIsMobile
+                                        ? layoutIsPortrait
+                                          ? 20 
+                                          : 10
+                                        : mapUniformScale(80, 150, width,height)),
+                                        child: ContactsTitle(scale: layoutIsMobile
+                                          ? 1.5
+                                          : mapUniformScale(1, 3, width,height)),
+                                      ),
+                                    ),
+                                    if (layoutIsPortrait)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: palette.extras[1],
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: palette.black, width: 0.8),
+                                      ),
+                                      padding: EdgeInsets.all(10),
+                                      child: tabler.SitemapFilled(
+                                        strokeWidth: 1,
+                                        color: palette.white,
+                                        width: 50,
+                                        height: 50,
+                                        
+                                      ),
+                                    ),
+                                      
+                                  ],
                                 ),
                               ),
                               // Search Bar
-                              Container(
-                                height: mapUniformScale(40, 60, width,height),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(color: palette.black, width: 0.8),
-                                ),
-                                child: TextField(
-                                  onChanged: (value) => _onSearchChanged(value),
-                                  controller: _searchController,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  style: TextStyle(
-                                      color: palette.black,
-                                      fontSize: mapUniformScale(24, 32, width,height),
-                                      fontWeight: FontWeight.w200,
-                                      fontFamily: 'Lexend',
-                                      fontVariations: [
-                                        FontVariation('wght', 300),
-                                      ],
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: mapUniformScale(40, 60, width,height),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(color: palette.black, width: 0.8),
+                                      ),
+                                      child: TextField(
+                                        onChanged: (value) => _onSearchChanged(value),
+                                        controller: _searchController,
+                                        textAlignVertical: TextAlignVertical.center,
+                                        style: TextStyle(
+                                            color: palette.black,
+                                            fontSize: mapUniformScale(24, 32, width,height),
+                                            fontWeight: layoutIsPortrait? FontWeight.w300: FontWeight.w200,
+                                            fontFamily: 'Lexend',
+                                            fontVariations: [
+                                              FontVariation('wght', 300),
+                                            ],
+                                          ),
+                                        decoration: InputDecoration(
+                                          hintText: 'Search',
+                                          
+                                          hintStyle: TextStyle(
+                                            color: palette.black,
+                                            fontSize: mapUniformScale(24, 32, width,height),
+                                            fontWeight: FontWeight.w200,
+                                            fontFamily: 'Lexend',
+                                            fontVariations: [
+                                              FontVariation('wght', 300),
+                                            ],
+                                          ),
+                                          prefixIcon: Padding(
+                                            padding: EdgeInsets.only(left: 15,top: mapUniformScale(2, 5, width,height),right: 5),
+                                            child: tabler.Search(strokeWidth: 0.6,width: mapUniformScale(24, 50, width,height),height: mapUniformScale(24, 50, width,height),),
+                                          ),
+                                          border: InputBorder.none,
+                                        ),
+                                      ),
                                     ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Search',
-                                    
-                                    hintStyle: TextStyle(
-                                      color: palette.black,
-                                      fontSize: mapUniformScale(24, 32, width,height),
-                                      fontWeight: FontWeight.w200,
-                                      fontFamily: 'Lexend',
-                                      fontVariations: [
-                                        FontVariation('wght', 300),
-                                      ],
-                                    ),
-                                    prefixIcon: Padding(
-                                      padding: EdgeInsets.only(left: 15,top: mapUniformScale(2, 5, width,height),right: 5),
-                                      child: tabler.Search(strokeWidth: 0.6,width: mapUniformScale(24, 50, width,height),height: mapUniformScale(24, 50, width,height),),
-                                    ),
-                                    border: InputBorder.none,
                                   ),
-                                ),
+                                  InkWell(
+                                    onTap: () {
+                                      
+                                    },
+                                    child: SvgPicture.asset('assets/icons/funnel.svg',
+                                    width: 45,
+                                    height: 45,),
+                                  )
+                                ],
                               ),
                               spacing,
                               //Group by Chips
                               FittedBox(
                                 fit: BoxFit.scaleDown,
+                                alignment: AlignmentGeometry.topLeft,
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text('Group By:',
                                     maxLines: 1,
@@ -281,6 +351,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                 )
               ),
             //filter and operation buttons
+            if(!layoutIsPortrait)
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               left: layoutIsMobile
@@ -291,7 +362,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
               top: layoutIsMobile
                 ? layoutIsPortrait
                   ? null
-                  : mapUniformScale(240, 800, width,height) +10
+                  : 240 +15
                 : null,
               bottom: layoutIsMobile
                 ? layoutIsPortrait
@@ -305,7 +376,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                 : filterbarSize.width,
               height: layoutIsMobile? layoutIsPortrait
                 ? navbarSize.height
-                : height-mapUniformScale(240, 800, width,height)-20
+                : height-240-30
                 : height,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: layoutIsMobile? 12: 24),
@@ -348,31 +419,34 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                     spacing,
                     //Contacts Filter
                     layoutIsMobile? Expanded(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: AlignmentGeometry.topLeft,
-                        child: SizedBox(
-                          width: 150,
-                          child: ContactsFilter(
-                            layoutIsPortrait: layoutIsPortrait,
-                            layoutIsMobile: layoutIsMobile,
-                            onChange: (person, company) {
-                              if (person && company){
-                                _selectedType = 'both';
-                              } else if (person && !company){
-                                _selectedType = 'person';
-                              } else if (!person && company){
-                                _selectedType = 'company';
-                              }
-                              setState(() {
-                              });
-                            },
-                          ),
+                      flex: 15,
+                      child:  Container(
+                        decoration: BoxDecoration(
+                          color: palette.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: layoutIsMobile? Border.all(color: palette.extras[1], width: 1): null,
+                        ),
+                        child: ContactsFilter(
+                          layoutIsPortrait: layoutIsPortrait,
+                          layoutIsMobile: layoutIsMobile,
+                          onChange: (person, company) {
+                            if (person && company){
+                              _selectedType = 'both';
+                            } else if (person && !company){
+                              _selectedType = 'person';
+                            } else if (!person && company){
+                              _selectedType = 'company';
+                            }
+                            setState(() {
+                            });
+                          },
                         ),
                       ),
-                    ):ContactsFilter(
-                      layoutIsPortrait: layoutIsPortrait,
-                      layoutIsMobile: layoutIsMobile,
+                    ):SizedBox(
+                      height:310,
+                      child: ContactsFilter(
+                        layoutIsPortrait: layoutIsPortrait,
+                        layoutIsMobile: layoutIsMobile,
                         onChange: (person, company) {
                           if (person && company){
                             _selectedType = 'both';
@@ -385,14 +459,15 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                           });
                         },
                       ),
-                    SizedBox(height: mapUniformScale(3, 21, width, height),width: 10,),
+                    ),
+                    SizedBox(height: mapUniformScale(10, 15, width, height),width: 10,),
 
                     if(layoutIsMobile)
-                    Expanded(child: ContactFieldsList(layoutIsMobile: layoutIsMobile)),
-                    SizedBox(height: mapUniformScale(3, 21, width, height),width: 10,),
-                    //Add Contact Button
+                    Expanded( flex: 15, child: ContactFieldsList(layoutIsMobile: layoutIsMobile)),
+                    SizedBox(height: mapUniformScale(3,  21, width, height),width: 10,),
+                    //Add & Export Contact Button
                     Expanded(
-                      flex: 2,
+                      flex: 10,
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [

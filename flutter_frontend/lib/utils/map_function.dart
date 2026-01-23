@@ -98,6 +98,18 @@ double mapWidthScale(
   return outMin + (outMax - outMin) * progress;
 }
 
+double mapHeightScale(
+  double outMin,
+  double outMax,
+  double sHeight, {
+  double baseHeight = 500,
+  double maxHeight = 1187,
+}) {
+  final progress =
+      ((sHeight - baseHeight) / (maxHeight - baseHeight)).clamp(0.0, 1.0);
+
+  return outMin + (outMax - outMin) * progress;
+}
 
 /// Extension on num to provide a convenient map method.
 ///

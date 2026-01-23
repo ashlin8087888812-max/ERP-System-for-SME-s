@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/palette.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 
 class ContactsFilter extends StatefulWidget {
   final Function(bool person, bool company) onChange;
@@ -20,19 +21,18 @@ class _ContactsFilterState extends State<ContactsFilter> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       padding: const EdgeInsets.all(4).copyWith(
-        left: widget.layoutIsMobile? 12: 4, 
+        top: widget.layoutIsMobile? 10: 4,
+        left: widget.layoutIsMobile? 15: 4, 
         right: widget.layoutIsMobile? 12: 4),
       decoration: BoxDecoration(
         color: palette.white,
         borderRadius: BorderRadius.circular(16),
-        border: widget.layoutIsMobile? Border.all(color: palette.extras[1], width: 1): null,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: widget.layoutIsMobile? CrossAxisAlignment.start: CrossAxisAlignment.center,
         children: [
           // Header
           Text(
@@ -45,117 +45,152 @@ class _ContactsFilterState extends State<ContactsFilter> {
               color: palette.extras[1],
             ),
           ),
-          const SizedBox(height: 12),
-
-          // Filter options
-          _FilterOption(
-            label: 'people',
-            iconPath: 'assets/icons/person.svg',
-            isActive: _showPeople,
-            onToggle: () {
-              setState(() {
-                _showPeople = !_showPeople;
-              });
-              widget.onChange(_showPeople, _showCompany);
-            },
-            activeColor: palette.extras[1],
-            inactiveColor: palette.extras[0],
-            textColor: palette.extras[1],
-            layoutIsMobile: widget.layoutIsMobile,
-            layoutIsPortrait: widget.layoutIsPortrait,
-          ),
-          const SizedBox(height: 16),
-
-          _FilterOption(
-            label: 'company',
-            iconPath: 'assets/icons/shop.svg',
-            isActive: _showCompany,
-            onToggle: () {
-              setState(() {
-                _showCompany = !_showCompany;
-              });
-              widget.onChange(_showPeople, _showCompany);
-            },
-            activeColor: palette.extras[1],
-            inactiveColor: palette.extras[0],
-            textColor: palette.extras[1],
-            layoutIsMobile: widget.layoutIsMobile,
-            layoutIsPortrait: widget.layoutIsPortrait,
-          ),
-          const SizedBox(height: 16),
-
-          _FilterOption(
-            label: 'archived',
-            iconPath: 'assets/icons/archive.svg',
-            isActive: _showArchived,
-            onToggle: () {
-              setState(() {
-                _showArchived = !_showArchived;
-              });
-              // widget.onChange(_showArchived ? 'archived' : 'people');
-            },
-            activeColor: palette.extras[1],
-            inactiveColor: palette.extras[0],
-            textColor: palette.extras[1],
-            layoutIsMobile: widget.layoutIsMobile,
-            layoutIsPortrait: widget.layoutIsPortrait,
-          ),
-          const SizedBox(height: 12),
-
-          // Custom filter button
-          Stack(
-            children: [
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-              ),
-
-              InkWell(
-                onTap: () {
-                  // Custom filter action
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: palette.extras[0],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          'custom',
-                          style: TextStyle(
-                            fontFamily: 'Lexend',
-                            fontSize: 17,
-                            letterSpacing: -1,
-                            fontWeight: FontWeight.w500,
-                            color: palette.extras[1],
+          Expanded(
+            child: ScrollConfiguration(
+              behavior: ScrollBehavior().copyWith(scrollbars: false),
+              child: DynMouseScroll(
+                durationMS: 500,
+                scrollSpeed: 1,
+                builder: (context, controller, physics) {
+                  return ShaderMask(
+                    blendMode: BlendMode.dstIn,
+                    shaderCallback: (rect) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black,
+                          Colors.black,
+                        ],
+                        stops: [0.0, 0.03, 1.0],
+                      ).createShader(rect);
+                    },
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      physics: widget.layoutIsMobile? physics: const NeverScrollableScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 12),
+                      
+                          // Filter options
+                          _FilterOption(
+                            label: 'people',
+                            iconPath: 'assets/icons/person.svg',
+                            isActive: _showPeople,
+                            onToggle: () {
+                              setState(() {
+                                _showPeople = !_showPeople;
+                              });
+                              widget.onChange(_showPeople, _showCompany);
+                            },
+                            activeColor: palette.extras[1],
+                            inactiveColor: palette.extras[0],
+                            textColor: palette.extras[1],
+                            layoutIsMobile: widget.layoutIsMobile,
+                            layoutIsPortrait: widget.layoutIsPortrait,
                           ),
-                        ),
+                          const SizedBox(height: 16),
+                      
+                          _FilterOption(
+                            label: 'company',
+                            iconPath: 'assets/icons/shop.svg',
+                            isActive: _showCompany,
+                            onToggle: () {
+                              setState(() {
+                                _showCompany = !_showCompany;
+                              });
+                              widget.onChange(_showPeople, _showCompany);
+                            },
+                            activeColor: palette.extras[1],
+                            inactiveColor: palette.extras[0],
+                            textColor: palette.extras[1],
+                            layoutIsMobile: widget.layoutIsMobile,
+                            layoutIsPortrait: widget.layoutIsPortrait,
+                          ),
+                          const SizedBox(height: 16),
+                      
+                          _FilterOption(
+                            label: 'archived',
+                            iconPath: 'assets/icons/archive.svg',
+                            isActive: _showArchived,
+                            onToggle: () {
+                              setState(() {
+                                _showArchived = !_showArchived;
+                              });
+                              // widget.onChange(_showArchived ? 'archived' : 'people');
+                            },
+                            activeColor: palette.extras[1],
+                            inactiveColor: palette.extras[0],
+                            textColor: palette.extras[1],
+                            layoutIsMobile: widget.layoutIsMobile,
+                            layoutIsPortrait: widget.layoutIsPortrait,
+                          ),
+                          const SizedBox(height: 12),
+                      
+                          // Custom filter button
+                          Stack(
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                width: double.infinity,
+                              ),
+                      
+                              InkWell(
+                                onTap: () {
+                                  // Custom filter action
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: palette.extras[0],
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          'custom',
+                                          style: TextStyle(
+                                            fontFamily: 'Lexend',
+                                            fontSize: 17,
+                                            letterSpacing: -1,
+                                            fontWeight: FontWeight.w500,
+                                            color: palette.extras[1],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 5,
+                                child: IgnorePointer(
+                                  ignoring: true,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/funnel.svg',
+                                    width: 40,
+                                    height: 40,
+                                    colorFilter: ColorFilter.mode(
+                                      palette.extras[1],
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                }
               ),
-              Positioned(
-                top: 0,
-                right: 5,
-                child: IgnorePointer(
-                  ignoring: true,
-                  child: SvgPicture.asset(
-                    'assets/icons/funnel.svg',
-                    width: 40,
-                    height: 40,
-                    colorFilter: ColorFilter.mode(
-                      palette.extras[1],
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
@@ -194,55 +229,58 @@ class _FilterOption extends StatelessWidget {
       children: [
         // Toggle switch
         Expanded(
-          child: GestureDetector(
-            onTap: onToggle,
-            child: SizedBox(
-              height: 60,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Custom toggle switch
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: layoutIsMobile ? 70 : 80,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: palette.white,
-                      borderRadius: BorderRadius.circular(17),
-                      border: Border.all(
-                        color: palette.extras[1],
-                        width: 1,
-                      ),
-                    ),
-                    child: AnimatedAlign(
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: onToggle,
+              child: SizedBox(
+                height: 60,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Custom toggle switch
+                    AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      alignment: isActive ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.all(3),
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: isActive ? activeColor : inactiveColor,
-                          shape: BoxShape.circle,
+                      width: layoutIsMobile ? 70 : 80,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: palette.white,
+                        borderRadius: BorderRadius.circular(17),
+                        border: Border.all(
+                          color: palette.extras[1],
+                          width: 1,
+                        ),
+                      ),
+                      child: AnimatedAlign(
+                        duration: const Duration(milliseconds: 200),
+                        alignment: isActive ? Alignment.centerRight : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.all(3),
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: isActive ? activeColor : inactiveColor,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  // Label
-                  Text(
-                    " "+label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Lexend',
-                      letterSpacing: -1,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: textColor,
+                    const SizedBox(height: 2),
+                    // Label
+                    Text(
+                      " "+label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Lexend',
+                        letterSpacing: -1,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: textColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

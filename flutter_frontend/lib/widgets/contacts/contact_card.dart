@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/contact_model.dart';
 import 'package:flutter_frontend/utils/palette.dart';
-import 'package:flutter_frontend/widgets/decorated_icon.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -51,7 +50,6 @@ class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClient
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     // Determine icon based on isCompany
     final icon = widget.contact.isCompany ? Icons.business : Icons.person;
-    final iconColor = palette.extras[0];
     print('rebuilding contacts_card');
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -352,56 +350,5 @@ class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClient
     );
             
 
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: iconColor.withOpacity(0.1),
-        child: widget.contact.image128 != null && widget.contact.image128!.isNotEmpty
-            ? ClipOval(
-                child: Image.memory(
-                  base64Decode(widget.contact.image128!),
-                  fit: BoxFit.cover,
-                  width: 40,
-                  height: 40,
-                  errorBuilder: (_, __, ___) => Icon(icon, color: iconColor),
-                ),
-              )
-            : Icon(icon, color: iconColor),
-      ),
-      title: Row(
-        children: [
-          Expanded(
-            child: Text(
-              widget.contact.displayName ?? widget.contact.name ?? 'Unnamed',
-              style: const TextStyle(fontWeight: FontWeight.w500),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (widget.contact.isCompany)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'COMPANY',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-        ],
-      ),
-      subtitle: Text(
-        widget.contact.email ?? widget.contact.phone ?? widget.contact.city ?? '',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.go('/contacts/${widget.contact.id}'),
-    );
   }
 }

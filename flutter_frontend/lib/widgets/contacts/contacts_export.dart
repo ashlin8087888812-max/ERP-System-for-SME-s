@@ -1,33 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/palette.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_next/tabler_icons_next.dart' as tabler;
 
 class ContactExport extends StatelessWidget {
-  ContactExport({super.key});
+  const ContactExport({super.key});
 
-
-  // Cache icons so they don't rebuild unnecessarily
-  late final Widget _personIcon = SvgPicture.asset(
-    'assets/icons/person.svg',
-    width: 40,
-    height: 40,
-    colorFilter: ColorFilter.mode(
-      palette.extras[1],
-      BlendMode.srcIn,
-    ),
-  );
-
-  late final Widget _companyIcon = SvgPicture.asset(
-    'assets/icons/shop.svg',
-    width: 40,
-    height: 40,
-    colorFilter: ColorFilter.mode(
-      palette.extras[1],
-      BlendMode.srcIn,
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
