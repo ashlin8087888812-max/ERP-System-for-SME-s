@@ -9,7 +9,10 @@ from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from app.config import settings
-from app.api.v1 import auth, ws, scm, health, users, admin, contacts
+from app.api.v1 import (
+    auth, ws, scm, health, users, admin, 
+    contacts, discuss, attachments, discuss_ws, discuss_metrics
+)
 from app.middleware.tenant import tenant_middleware
 from app.middleware.metrics import PrometheusMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -84,7 +87,7 @@ async def startup_event():
     # Setup database logging if enabled
     if settings.LOG_SQL_QUERIES:
         try:
-            from app.db.session import engine
+            from app.db.base import engine
             from app.middleware.database_logging import setup_database_logging
             setup_database_logging(engine)
         except Exception as e:
@@ -114,6 +117,10 @@ app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["u
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
 app.include_router(scm.router, prefix=f"{settings.API_V1_STR}/scm", tags=["scm"])
 app.include_router(contacts.router, prefix=f"{settings.API_V1_STR}/contacts", tags=["contacts"])
+app.include_router(discuss.router, prefix=f"{settings.API_V1_STR}/discuss", tags=["discuss"])
+app.include_router(attachments.router, prefix=f"{settings.API_V1_STR}/attachments", tags=["attachments"])
+app.include_router(discuss_ws.router, prefix=settings.API_V1_STR, tags=["discuss_ws"])
+app.include_router(discuss_metrics.router, prefix=f"{settings.API_V1_STR}/admin", tags=["discuss_admin"])
 app.include_router(ws.router, prefix=settings.API_V1_STR, tags=["ws"])
 app.include_router(health.router, tags=["health"])
 

@@ -85,9 +85,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                       Text('SYN', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
-                       Text('CER', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
-                       Text('ELY', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
+                      Text('GEST', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
+                      Text('ACE', style: TextStyle(fontFamily: 'First', fontSize: 40, color: Color(0xFF1E1E1E), height: 1)),
                     ],
                   ),
                 ),
@@ -246,9 +245,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                       Text('SYN', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
-                       Text('CER', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
-                       Text('ELY', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
+                       Text('GEST', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
+                       Text('ACE', style: TextStyle(fontFamily: 'First', fontSize: 80, color: Color(0xFF1E1E1E), height: 1)),
                     ],
                   ),
                 ),

@@ -88,7 +88,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> with TickerProviderSt
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                     Hero(
+                    Hero(
                       tag: 'menu_icon',
                       child: HoverIcon(
                         icon: Opacity( 

@@ -1,40 +1,129 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/utils/adaptive_layout.dart';
+import 'package:flutter_frontend/utils/layout_tier.dart';
+import 'package:flutter_frontend/utils/palette.dart';
+import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
+import 'package:flutter_frontend/widgets/hover_icon.dart';
+import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/contacts_provider.dart';
 import '../../models/contact_model.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../utils/app_page.dart';
 
 class ContactDetailsPage extends ConsumerWidget {
   final int contactId;
 
   const ContactDetailsPage({super.key, required this.contactId});
 
+ 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final contactAsync = ref.watch(contactDetailProvider(contactId));
+    final layoutTier = ref.watch(layoutTierProvider);
+    final layoutOrientation = ref.watch(layoutOrientationProvider);
+    final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
+    final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
+    final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
+    final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
+    const SizedBox spacing  = SizedBox(height: 15);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    Size navbarSize = Size(60,60);
+    Size filterbarSize = Size(200,60);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contact Details'),
-        actions: [
-          contactAsync.when(
-            data: (contact) => IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                context.go('/contacts/$contactId/edit');
-              },
+      // appBar: AppBar(
+      //   title: const Text('Contact Details'),
+      //   actions: [
+      //     contactAsync.when(
+      //       data: (contact) => IconButton(
+      //         icon: const Icon(Icons.edit),
+      //         onPressed: () {
+      //           context.go('/contacts/$contactId/edit');
+      //         },
+      //       ),
+      //       loading: () => const SizedBox.shrink(),
+      //       error: (_, __) => const SizedBox.shrink(),
+      //     ),
+      //   ],
+      // ),
+      // body: contactAsync.when(
+      //   data: (contact) => _ContactDetailView(contact: contact),
+      //   loading: () => const Center(child: CircularProgressIndicator()),
+      //   error: (err, stack) => Center(child: Text('Error: $err')),
+      // ),
+      body: AdaptiveLayout(child: Stack(
+        children: [
+          //navbar
+          AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                left: layoutIsMobile? layoutIsPortrait? 14:0:8,
+                bottom: layoutIsMobile? 0:10,
+                width: layoutIsPortrait? width-14:navbarSize.width,
+                height: layoutIsPortrait? navbarSize.height:height - 30,
+                child: Flex(
+                  direction: layoutIsPortrait? Axis.horizontal: Axis.vertical,
+                  children: [
+                    Hero(
+                      tag: 'menu_icon',
+                      child: HoverIcon(
+                        icon: MenuIcon(page: AppPage.dashboard),
+                        label: 'Menu',
+                        elevate: false,
+                        onTap: () {
+                          if(layoutIsDesktop){
+                            context.go('/dashboard?sidebar=open');
+                          } else {
+                            context.go('/menu');
+                          }
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: layoutIsPortrait? 0:10,left: layoutIsPortrait? 10:0),
+                        child: Navbar(
+                          size: navbarSize,
+                          sidebar: false,
+                          page: AppPage.contacts,
+                        )
+                      ),
+                    )
+                  ],
+                )
+              ),
+          Positioned(
+            left: navbarSize.width,
+            child: Row(
+              children: [
+                AnimatedContainer(
+                  height: 130,
+                  width: 130,
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: palette.extras[0],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  duration: const Duration(milliseconds: 300),
+                  
+                ),
+                Expanded(child: Column(
+                  children: [
+                    Text('name'),
+                    Text('email'),
+                    Text('phone'),
+                  ],
+                ))
+              ],
             ),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
+          )
         ],
-      ),
-      body: contactAsync.when(
-        data: (contact) => _ContactDetailView(contact: contact),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-      ),
+      )),
     );
   }
 }

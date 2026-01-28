@@ -8,12 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// =======================================================
 
 class AdaptiveLayout extends ConsumerStatefulWidget {
+  final Widget child;
+  
   const AdaptiveLayout({
     super.key,
     required this.child,
   });
 
-  final Widget child;
+  
 
   @override
   ConsumerState<AdaptiveLayout> createState() =>

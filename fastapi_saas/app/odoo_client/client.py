@@ -1,15 +1,13 @@
-#odoo_client/client.py
 import xmlrpc.client
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Optional
 from app.config import settings
 from app.db import models
 import logging
+from .xmlrpc_pool import xmlrpc_pool
 
 logger = logging.getLogger(__name__)
 
-
 class OdooClient:
-
     def __init__(self) -> None:
         # key: "host:db:user" -> uid
         self._uids: dict[str, int] = {}
@@ -60,26 +58,17 @@ class OdooClient:
 
         try:
             uid = self._get_uid(host, db, user, password)
-
-            # 🔑 NEW: create a fresh ServerProxy for *each* call
             models_proxy = xmlrpc.client.ServerProxy(
                 f"{host}/xmlrpc/2/object",
                 allow_none=True,
             )
-
             return models_proxy.execute_kw(db, uid, password, model, method, args, kwargs)
-
         except Exception as e:
-            logger.error(
-                "Odoo RPC Error: %s (model=%s, method=%s, args=%s, kwargs=%s)",
-                e,
-                model,
-                method,
-                args,
-                kwargs,
-            )
-            # Re-raise so FastAPI can turn it into a 500
+            logger.error(f"Odoo RPC Error: {e} (model={model}, method={method})")
             raise
 
+    async def execute_kw_async(self, *args, **kwargs):
+        """Bridged to the hardened pool for high-performance calls"""
+        return await xmlrpc_pool.execute_kw(*args, **kwargs)
 
 odoo_client = OdooClient()

@@ -32,6 +32,7 @@ class AuthState {
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
     );
   }
+
 }
 
 // Auth Notifier

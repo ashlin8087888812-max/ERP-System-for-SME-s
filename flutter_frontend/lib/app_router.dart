@@ -7,6 +7,7 @@ import '../pages/contacts/contacts_page.dart';
 import '../pages/contacts/contact_form_page.dart';
 import '../pages/contacts/contact_details_page.dart';
 import '../pages/sidebar_menu.dart';
+import '../pages/threads/threads_page.dart';
 
 class AppRouter {
   static GoRouter router(Ref ref) {
@@ -65,12 +66,23 @@ class AppRouter {
                   path: 'edit',
                   builder: (context, state) {
                     final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
-                    // We can pass the ID, and the page will fetch the contact if needed
-                    // Or we can pass the contact object via extra if available
                     return ContactFormPage(contactId: id);
                   },
                 ),
               ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/threads',
+          builder: (context, state) => const ThreadsPage(),
+          routes: [
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = state.pathParameters['id'] ?? 'mail.box_inbox';
+                return ThreadsPage(threadId: id);
+              },
             ),
           ],
         ),

@@ -308,10 +308,11 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                         flex: 10,
                         child: Container(
                           padding: EdgeInsets.all(12),
+
                           height: 380,
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            alignment: AlignmentGeometry.topLeft,
+                            alignment: AlignmentGeometry.topRight,
                             child: Container(
                               height: 480,
                               width: 240,

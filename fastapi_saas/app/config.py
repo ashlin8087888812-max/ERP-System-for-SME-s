@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from typing import Optional, Dict
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Syncerity"
+    PROJECT_NAME: str = "Gestace"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = "development"  # development, staging, production
     
@@ -70,7 +70,7 @@ class Settings(BaseSettings):
     # OpenTelemetry
     OTEL_ENABLED: bool = False
     OTEL_EXPORTER_OTLP_ENDPOINT: str = "http://localhost:4317"
-    OTEL_SERVICE_NAME: str = "syncerity-api"
+    OTEL_SERVICE_NAME: str = "gestace-api"
     OTEL_TRACES_SAMPLER: str = "parentbased_traceidratio"
     OTEL_TRACES_SAMPLER_ARG: float = 0.1  # 10% sampling
     OTEL_FAIL_SILENTLY: bool = True

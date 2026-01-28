@@ -5,6 +5,7 @@ import 'services/websocket_service.dart';
 import 'services/auth_storage.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/contacts_repository.dart';
+import 'repositories/threads_repository.dart';
 
 final sl = GetIt.instance;
 
@@ -38,4 +39,5 @@ Future<void> init() async {
 
   // Modules - Contacts
   sl.registerLazySingleton(() => ContactsRepository(sl<ApiClient>()));
+  sl.registerLazySingleton(() => ThreadsRepository(sl<ApiClient>()));
 }
