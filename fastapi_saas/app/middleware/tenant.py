@@ -2,6 +2,7 @@ from fastapi import Request, HTTPException, status
 from typing import Optional
 from app.db.base import SessionLocal
 from app.db import models
+from app.config import settings
 
 async def tenant_middleware(request: Request, call_next):
     """
@@ -24,10 +25,11 @@ async def tenant_middleware(request: Request, call_next):
             
             if company:
                 # Inject tenant context into request
+                # Fallback to global ODOO_HOST if company-level is not set
                 request.state.tenant = {
                     "company_id": company.id,
                     "db_name": company.db_name,
-                    "odoo_host": company.odoo_host,
+                    "odoo_host": company.odoo_host or settings.ODOO_HOST,
                     "company_name": company.name
                 }
             else:

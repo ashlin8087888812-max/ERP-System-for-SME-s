@@ -20,7 +20,6 @@ class UserCreate(BaseModel):
     full_name: str
     company_name: str
     company_db_name: str
-    odoo_host: str
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -138,12 +137,11 @@ def signup(user_in: UserCreate, request: Request, db: Session = Depends(get_db))
             detail="The company with this name already exists.",
         )
         
-    # Create Company
+    # Create Company (odoo_host defaults to settings.ODOO_HOST)
     company = crud.create_company(
         db=db,
         name=user_in.company_name,
         db_name=user_in.company_db_name,
-        odoo_host=user_in.odoo_host
     )
     
     # Create User

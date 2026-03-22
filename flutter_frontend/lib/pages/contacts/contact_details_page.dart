@@ -98,6 +98,9 @@ class ContactDetailsPage extends ConsumerWidget {
               ),
           Positioned(
             left: navbarSize.width,
+            top: 0,
+            right: 0,
+            bottom: 0,
             child: Row(
               children: [
                 AnimatedContainer(
@@ -110,9 +113,10 @@ class ContactDetailsPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   duration: const Duration(milliseconds: 300),
-                  
+
                 ),
                 Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('name'),
                     Text('email'),

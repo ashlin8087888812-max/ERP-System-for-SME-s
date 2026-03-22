@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: Optional[str] = None
     
     # Odoo
+    ODOO_HOST: str = "http://34.56.20.178:8068"
     ODOO_SERVICE_USER: Optional[str] = None
     ODOO_SERVICE_PASSWORD: Optional[str] = None
     

@@ -4,6 +4,7 @@ import logging
 from app.db.base import SessionLocal
 from app.db import models
 from app.odoo_client.client import odoo_client
+from app.config import settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,13 +35,12 @@ async def make_admin():
             print(f"User {user.email} already has 'admin' role in FastAPI")
 
         company = user.company
-        # Override host for local execution if needed
-        local_host = "http://localhost:8068"
-        company.odoo_host = local_host
+        # Use global ODOO_HOST from settings
+        company.odoo_host = settings.ODOO_HOST
         
         print(f"User: {user.email} (ID: {user.id})")
         print(f"Company: {company.name} (ID: {company.id}, DB: {company.db_name})")
-        print(f"Targeting Odoo at: {local_host}")
+        print(f"Targeting Odoo at: {settings.ODOO_HOST}")
 
         # 2. Ensure Odoo User exists and is an admin
         print(f"Checking if Odoo user {user.email} exists...")

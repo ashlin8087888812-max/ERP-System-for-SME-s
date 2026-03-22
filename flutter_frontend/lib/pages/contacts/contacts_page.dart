@@ -504,6 +504,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             //alphabet scrollbar
             Positioned(
                 right: 6,
+                top: 0,
                 height: height - (layoutIsPortrait? navbarSize.height:0),
                 child: AlphabetScrollbar(
                   //onLetterChange is needed and should contain a Function(String letter), where you handle your Scrolling. 

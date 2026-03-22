@@ -54,7 +54,9 @@ class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClient
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
+          print('ContactCard tapped: ${widget.contact.id}');
           context.push('/contacts/${widget.contact.id}');
         },
         child: LayoutBuilder(
@@ -121,7 +123,8 @@ class _ContactCardState extends State<ContactCard> with AutomaticKeepAliveClient
                         ),
                       ),
                       Positioned(
-                        bottom:0,
+                        bottom: 0,
+                        left: 0,
                         width: constraints.maxWidth,
                         child: InnerShadow(
                           shadows: [

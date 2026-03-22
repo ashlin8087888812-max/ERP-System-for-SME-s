@@ -1,5 +1,6 @@
 from app.db.base import SessionLocal
 from app.db import crud
+from app.config import settings
 import bcrypt
 
 db = SessionLocal()
@@ -8,14 +9,13 @@ db = SessionLocal()
 user = crud.get_user_by_email(db, 'test@example.com')
 
 if not user:
-    # Create test company
+    # Create test company (odoo_host defaults to settings.ODOO_HOST)
     company = crud.get_company_by_name(db, 'Test Company')
     if not company:
         company = crud.create_company(
             db=db,
             name='Test Company',
             db_name='test_db',
-            odoo_host='http://host.docker.internal:8068'  # Use host.docker.internal for Docker-to-host communication
         )
     
     # Create password hash directly with bcrypt
