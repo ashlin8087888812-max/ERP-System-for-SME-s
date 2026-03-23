@@ -35,9 +35,6 @@ async def make_admin():
             print(f"User {user.email} already has 'admin' role in FastAPI")
 
         company = user.company
-        # Use global ODOO_HOST from settings
-        company.odoo_host = settings.ODOO_HOST
-        
         print(f"User: {user.email} (ID: {user.id})")
         print(f"Company: {company.name} (ID: {company.id}, DB: {company.db_name})")
         print(f"Targeting Odoo at: {settings.ODOO_HOST}")

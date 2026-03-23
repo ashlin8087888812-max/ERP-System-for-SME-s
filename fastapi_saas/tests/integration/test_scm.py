@@ -10,8 +10,7 @@ def test_create_purchase_order(client):
             "password": "password123",
             "full_name": "Test User",
             "company_name": "Test Company",
-            "company_db_name": "test_db",
-            "odoo_host": "http://localhost:8068"
+            "company_db_name": "test_db"
         },
     )
 
@@ -51,8 +50,7 @@ def test_idempotency(client):
             "password": "password123",
             "full_name": "Test User",
             "company_name": "Test Company",
-            "company_db_name": "test_db",
-            "odoo_host": "http://localhost:8068"
+            "company_db_name": "test_db"
         },
     )
 

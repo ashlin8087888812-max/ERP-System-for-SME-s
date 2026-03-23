@@ -18,7 +18,7 @@ class Company(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(Text, nullable=False)
     db_name = Column(Text, nullable=False, unique=True)
-    odoo_host = Column(Text, nullable=False)
+
     plan_id = Column(Integer, ForeignKey("plans.id"))
     status = Column(Text, default="trial")
     created_at = Column(DateTime, default=datetime.utcnow)

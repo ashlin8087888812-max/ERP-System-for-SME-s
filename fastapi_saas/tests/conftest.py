@@ -56,7 +56,6 @@ def test_company(db):
     company = models.Company(
         name="Test Company",
         db_name="test_db",
-        odoo_host="http://localhost:8068",
         status="active"
     )
     db.add(company)

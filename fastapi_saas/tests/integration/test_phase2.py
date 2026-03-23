@@ -208,7 +208,6 @@ class TestCeleryTasks:
         tenant = {
             "company_id": test_company.id,
             "db_name": test_company.db_name,
-            "odoo_host": test_company.odoo_host,
             "company_name": test_company.name
         }
         

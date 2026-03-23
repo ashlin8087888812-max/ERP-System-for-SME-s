@@ -47,8 +47,7 @@ def test_user(test_db):
     company = crud.create_company(
         db=test_db,
         name="Refresh Test Co",
-        db_name="refresh_test_db",
-        odoo_host="http://localhost:8069"
+        db_name="refresh_test_db"
     )
     
     user = crud.create_user(

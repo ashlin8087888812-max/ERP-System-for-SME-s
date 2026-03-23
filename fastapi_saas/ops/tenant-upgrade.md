@@ -182,7 +182,7 @@ psql -U postgres -c "
 curl http://localhost:8000/health
 
 # Check Odoo health for tenant
-curl http://localhost:8068/web/database/selector
+curl http://localhost:8069/web/database/selector
 
 # Check Celery workers
 celery -A app.workers.celery_app inspect ping

@@ -9,7 +9,7 @@ db = SessionLocal()
 user = crud.get_user_by_email(db, 'test@example.com')
 
 if not user:
-    # Create test company (odoo_host defaults to settings.ODOO_HOST)
+    # Create test company
     company = crud.get_company_by_name(db, 'Test Company')
     if not company:
         company = crud.create_company(

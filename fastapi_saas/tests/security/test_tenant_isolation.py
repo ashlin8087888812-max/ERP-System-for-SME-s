@@ -20,8 +20,7 @@ class TestMultiTenancyIsolation:
         # Company A
         company_a = models.Company(
             name="Company A",
-            db_name="company_a_db",
-            odoo_host="https://a.odoo.com"
+            db_name="company_a_db"
         )
         db.add(company_a)
         db.commit()
@@ -58,8 +57,7 @@ class TestMultiTenancyIsolation:
         # Company B
         company_b = models.Company(
             name="Company B",
-            db_name="company_b_db",
-            odoo_host="https://b.odoo.com"
+            db_name="company_b_db"
         )
         db.add(company_b)
         db.commit()
@@ -212,8 +210,7 @@ class TestMultiTenancyIsolation:
         event_id = uuid.uuid4()
         tenant_b_context = {
             "company_id": tenant_b_setup["company"].id,
-            "db_name": tenant_b_setup["company"].db_name,
-            "odoo_host": tenant_b_setup["company"].odoo_host
+            "db_name": tenant_b_setup["company"].db_name
         }
         
         # Enqueue task
@@ -249,8 +246,7 @@ class TestRowLevelSecurity:
         """Create Tenant A with user and data"""
         company_a = models.Company(
             name="Company A RLS",
-            db_name="company_a_rls_db",
-            odoo_host="https://a-rls.odoo.com"
+            db_name="company_a_rls_db"
         )
         db.add(company_a)
         db.commit()
@@ -272,8 +268,7 @@ class TestRowLevelSecurity:
         """Create Tenant B with user and data"""
         company_b = models.Company(
             name="Company B RLS",
-            db_name="company_b_rls_db",
-            odoo_host="https://b-rls.odoo.com"
+            db_name="company_b_rls_db"
         )
         db.add(company_b)
         db.commit()

@@ -53,8 +53,8 @@ class OdooClient:
         user = settings.ODOO_SERVICE_USER
         password = settings.ODOO_SERVICE_PASSWORD
 
-        host = company.odoo_host
-        db = company.db_name
+        host = settings.ODOO_HOST
+        db = settings.ODOO_DB
 
         try:
             uid = self._get_uid(host, db, user, password)

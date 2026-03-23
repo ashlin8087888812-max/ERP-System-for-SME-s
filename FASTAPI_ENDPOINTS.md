@@ -62,7 +62,7 @@
 
 | Variable | Example | Used By |
 |----------|---------|--------|
-| `ODOO_HOST` | `http://localhost:8068` | Global Odoo instance URL — used by `crud.create_company()`, tenant middleware, `promote_user.py`, `create_test_user.py` |
+| `ODOO_HOST` | `http://localhost:8069` | Global Odoo instance URL — used by `crud.create_company()`, tenant middleware, `promote_user.py`, `create_test_user.py` |
 | `ODOO_SERVICE_USER` | `123@456` | XML-RPC auth in `client.py` |
 | `ODOO_SERVICE_PASSWORD` | `admin` | XML-RPC auth in `client.py` |
 

@@ -6,8 +6,7 @@ def test_signup(client):
             "password": "password123",
             "full_name": "Test User",
             "company_name": "Test Company",
-            "company_db_name": "test_db",
-            "odoo_host": "http://localhost:8068"
+            "company_db_name": "test_db"
         },
     )
     assert response.status_code == 200
