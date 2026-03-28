@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/adaptive_layout.dart';
 import 'package:flutter_frontend/utils/layout_tier.dart';
 import 'package:flutter_frontend/utils/palette.dart';
-import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
+import 'package:flutter_frontend/widgets/navbar.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
 import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/contacts_provider.dart';
+// import '../../providers/contacts_provider.dart';
 import '../../models/contact_model.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,18 +22,18 @@ class ContactDetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final contactAsync = ref.watch(contactDetailProvider(contactId));
+    // final contactAsync = ref.watch(contactDetailProvider(contactId));
     final layoutTier = ref.watch(layoutTierProvider);
     final layoutOrientation = ref.watch(layoutOrientationProvider);
     final layoutIsMobile = layoutTier == LayoutTier.compact || layoutTier == LayoutTier.mobile;
     final layoutIsDesktop = layoutTier == LayoutTier.tablet || layoutTier == LayoutTier.desktop;
     final layoutIsPortrait = layoutOrientation == Orientation.portrait && layoutIsMobile;
-    final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
-    const SizedBox spacing  = SizedBox(height: 15);
+    // final layoutIsLandscape = layoutOrientation == Orientation.landscape && layoutIsMobile;
+    // const SizedBox spacing  = SizedBox(height: 15);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     Size navbarSize = Size(60,60);
-    Size filterbarSize = Size(200,60);
+    // Size filterbarSize = Size(200,60);
 
     return Scaffold(
       // appBar: AppBar(

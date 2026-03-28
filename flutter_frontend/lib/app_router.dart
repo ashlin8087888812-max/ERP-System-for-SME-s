@@ -6,7 +6,7 @@ import '../pages/dashboard_page.dart';
 import '../pages/contacts/contacts_page.dart';
 import '../pages/contacts/contact_form_page.dart';
 import '../pages/contacts/contact_details_page.dart';
-import '../pages/sidebar_menu.dart';
+import 'pages/branch_browser_menu.dart';
 import '../pages/threads/threads_page.dart';
 
 class AppRouter {
@@ -88,7 +88,7 @@ class AppRouter {
         ),
         GoRoute(
           path: '/menu',
-          builder: (context, state) => const SidebarMenu(),
+          builder: (context, state) => const BranchBrowserMenu(),
         ),
       ],
     );

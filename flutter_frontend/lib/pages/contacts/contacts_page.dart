@@ -13,7 +13,7 @@ import 'package:flutter_frontend/widgets/contacts/contact_fields_list.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_browser.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_export.dart';
 import 'package:flutter_frontend/widgets/contacts/contacts_title.dart';
-import 'package:flutter_frontend/widgets/dashboard/navbar.dart';
+import 'package:flutter_frontend/widgets/navbar.dart';
 import 'package:flutter_frontend/widgets/hover_icon.dart';
 import 'package:flutter_frontend/widgets/icons/menu_icon.dart';
 import 'package:flutter_frontend/widgets/titles/gestace_title.dart';
