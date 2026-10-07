@@ -8,6 +8,9 @@ import '../pages/contacts/contact_form_page.dart';
 import '../pages/contacts/contact_details_page.dart';
 import 'pages/branch_browser_menu.dart';
 import '../pages/threads/threads_page.dart';
+import '../pages/sales/sales_page.dart';
+import '../pages/accounting/accounting_page.dart';
+import '../pages/inventory/inventory_page.dart';
 
 class AppRouter {
   static GoRouter router(Ref ref) {
@@ -89,6 +92,18 @@ class AppRouter {
         GoRoute(
           path: '/menu',
           builder: (context, state) => const BranchBrowserMenu(),
+        ),
+        GoRoute(
+          path: '/sales',
+          builder: (context, state) => const SalesPage(),
+        ),
+        GoRoute(
+          path: '/accounting',
+          builder: (context, state) => const AccountingPage(),
+        ),
+        GoRoute(
+          path: '/inventory',
+          builder: (context, state) => const InventoryPage(),
         ),
       ],
     );

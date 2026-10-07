@@ -86,3 +86,66 @@ Branch get profiles => Branch(
   showIcon: true,
   offset: const Offset(2,2),
 );
+
+Branch get sales => Branch(
+  name: 'sales',
+  url: '/sales',
+  category: 'Sales',
+  icon: tabler.CurrencyDollar(),
+  color: const Color(0xFFE2F0CB),
+  gradient: const LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFA4E5A1), Color(0xFF7CB342)],
+  ),
+  hasImage: false,
+  iconSvg: '',
+  overlaySvg: '',
+  iconSize: 55,
+  overlaySize: 35,
+  showOverlay: false,
+  showIcon: true,
+  offset: const Offset(2,2),
+);
+
+Branch get accounting => Branch(
+  name: 'accounting',
+  url: '/accounting',
+  category: 'Accounting',
+  icon: tabler.FileInvoice(),
+  color: const Color(0xFFFFDAB9),
+  gradient: const LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFFB347), Color(0xFFFF7B25)],
+  ),
+  hasImage: false,
+  iconSvg: '',
+  overlaySvg: '',
+  iconSize: 55,
+  overlaySize: 35,
+  showOverlay: false,
+  showIcon: true,
+  offset: const Offset(2,2),
+);
+
+Branch get inventory => Branch(
+  name: 'inventory',
+  url: '/inventory',
+  category: 'Inventory',
+  icon: tabler.BoxSeam(),
+  color: const Color(0xFFB0E0E6),
+  gradient: const LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF87CEFA), Color(0xFF4682B4)],
+  ),
+  hasImage: false,
+  iconSvg: '',
+  overlaySvg: '',
+  iconSize: 55,
+  overlaySize: 35,
+  showOverlay: false,
+  showIcon: true,
+  offset: const Offset(2,2),
+);

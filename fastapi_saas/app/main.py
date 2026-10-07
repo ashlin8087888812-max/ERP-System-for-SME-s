@@ -11,7 +11,8 @@ from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from app.config import settings
 from app.api.v1 import (
     auth, ws, scm, health, users, admin, 
-    contacts, discuss, attachments, discuss_ws, discuss_metrics
+    contacts, discuss, attachments, discuss_ws, discuss_metrics,
+    sales, accounting
 )
 from app.middleware.tenant import tenant_middleware
 from app.middleware.metrics import PrometheusMiddleware
@@ -116,6 +117,8 @@ app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["aut
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
 app.include_router(scm.router, prefix=f"{settings.API_V1_STR}/scm", tags=["scm"])
+app.include_router(sales.router, prefix=f"{settings.API_V1_STR}/sales", tags=["sales"])
+app.include_router(accounting.router, prefix=f"{settings.API_V1_STR}/accounting", tags=["accounting"])
 app.include_router(contacts.router, prefix=f"{settings.API_V1_STR}/contacts", tags=["contacts"])
 app.include_router(discuss.router, prefix=f"{settings.API_V1_STR}/discuss", tags=["discuss"])
 app.include_router(attachments.router, prefix=f"{settings.API_V1_STR}/attachments", tags=["attachments"])

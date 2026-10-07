@@ -13,3 +13,4 @@ extension bodmas on SizedBox {
   SizedBox operator *(num other) => _apply(other, (a, b) => a * b);
   SizedBox operator /(num other) => _apply(other, (a, b) => a / b);
 }
+

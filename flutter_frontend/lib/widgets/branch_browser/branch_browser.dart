@@ -24,7 +24,9 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
     threads,
     settings,
     profiles,
-    
+    sales,
+    accounting,
+    inventory,
   ];
 
   List<Branch> get _filteredModules {
@@ -86,6 +88,8 @@ class _BranchBrowserState extends ConsumerState<BranchBrowser> {
             _buildFilterChip('Sales'),
             const SizedBox(width: 8),
             _buildFilterChip('Accounting'),
+            const SizedBox(width: 8),
+            _buildFilterChip('Inventory'),
           ],
         ),
         
